@@ -8,6 +8,7 @@ signal wave_completed(wave_number: int)
 @export var spawn_interval: float = 1.0
 
 var hex_grid: HexGridNode
+var coin_scene: PackedScene
 var current_wave: int = 0
 var enemies_remaining: int = 0
 var _spawn_timer: float = 0.0
@@ -70,8 +71,10 @@ func _spawn_next() -> void:
 	var spawn_px := hex_grid.hex_grid_to_pixel(spawn_hex)
 
 	var enemy: EnemyBase = enemy_scene.instantiate()
+	enemy.coin_scene = coin_scene
 	get_parent().add_child(enemy)
 	enemy.died.connect(_on_enemy_died)
+	enemy.reached_center.connect(_on_enemy_died.bind(Vector2.ZERO))
 	enemy.init(hex_grid, spawn_px, Vector2i.ZERO)
 
 

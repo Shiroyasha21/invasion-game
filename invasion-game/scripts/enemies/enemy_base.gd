@@ -3,6 +3,7 @@ class_name EnemyBase
 
 @export var move_speed: float = 80.0
 @export var max_health: float = 30.0
+@export var coin_scene: PackedScene
 
 var current_health: float
 var path: Array[Vector2] = []
@@ -63,7 +64,6 @@ func _die() -> void:
 
 
 func _drop_coin() -> void:
-	var coin_scene := load("res://scenes/systems/Coin.tscn") as PackedScene
 	if coin_scene == null:
 		return
 	var coin: Coin = coin_scene.instantiate()
@@ -73,10 +73,12 @@ func _drop_coin() -> void:
 
 
 func _on_reached_center() -> void:
+	emit_signal("reached_center")
 	queue_free()
 
 
 signal died(position: Vector2)
+signal reached_center
 
 
 # A* pathfinding on the hex grid to target

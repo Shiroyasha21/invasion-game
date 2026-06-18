@@ -6,8 +6,12 @@ class_name TowerBase
 @export var attack_speed: float = 1.0  # shots per second
 @export var projectile_scene: PackedScene
 
-var _fire_timer: float = 0.0
+var _fire_timer: float = 1.0
 var _target: EnemyBase = null
+
+
+func _ready() -> void:
+	_fire_timer = 1.0 / attack_speed
 
 
 func _process(delta: float) -> void:

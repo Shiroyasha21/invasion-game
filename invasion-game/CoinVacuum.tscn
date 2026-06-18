@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://coiv18iqa14ad"]
+
+[ext_resource type="Script" uid="uid://knh1ebtew6pi" path="res://scripts/systems/coin_vacuum.gd" id="1_htmk6"]
+
+[node name="CoinVacuum" type="Node2D" unique_id=1517443633]
+script = ExtResource("1_htmk6")

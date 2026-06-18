@@ -7,10 +7,12 @@ extends Node2D
 @export var enemy_scene: PackedScene
 @export var tower_scene: PackedScene
 @export var projectile_scene: PackedScene
+@export var coin_scene: PackedScene
 
 
 func _ready() -> void:
 	wave_manager.enemy_scene = enemy_scene
+	wave_manager.coin_scene = coin_scene
 	wave_manager.init(hex_grid)
 	wave_manager.wave_completed.connect(_on_wave_completed)
 
