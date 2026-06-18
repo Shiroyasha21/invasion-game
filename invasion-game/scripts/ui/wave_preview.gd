@@ -11,12 +11,11 @@ func init(grid: HexGridNode) -> void:
 func show_preview(directions: Array[int]) -> void:
 	var hexes: Array[Vector2i] = []
 	for dir in directions:
-		# Highlight the outermost ring tiles facing each spawn direction
 		var dir_vec: Vector2i = HexGrid.DIRECTIONS[dir]
-		for hex in HexGrid.ring(Vector2i.ZERO, _hex_grid.grid_radius):
-			var dot := float(hex.x * dir_vec.x + hex.y * dir_vec.y)
-			# Include hexes in the top third of the dot product range for that direction
-			if dot >= float(_hex_grid.grid_radius) * 0.5:
+		# Trace the straight corridor from edge to center along this direction axis
+		for r in range(1, _hex_grid.grid_radius + 1):
+			var hex := Vector2i(dir_vec.x * r, dir_vec.y * r)
+			if _hex_grid.is_valid_tile(hex) and hex not in hexes:
 				hexes.append(hex)
 	_hex_grid.set_highlights(hexes)
 
