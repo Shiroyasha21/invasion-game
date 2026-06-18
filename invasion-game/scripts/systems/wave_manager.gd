@@ -10,6 +10,7 @@ signal wave_completed(wave_number: int)
 var hex_grid: HexGridNode
 var coin_scene: PackedScene
 var center_piece: CenterPiece
+var wave_preview: CanvasLayer
 var current_wave: int = 0
 var enemies_remaining: int = 0
 var _spawn_timer: float = 0.0
@@ -22,10 +23,18 @@ func init(grid: HexGridNode) -> void:
 
 func start_wave(wave_number: int) -> void:
 	current_wave = wave_number
+	GameState.set_wave(wave_number)
+
+	# Show direction preview then start spawning
+	var dirs := _active_directions(wave_number)
+	if wave_preview != null:
+		wave_preview.show_preview(dirs)
+		await get_tree().create_timer(3.0).timeout
+		wave_preview.hide_preview()
+
 	_spawn_queue = _build_spawn_queue(wave_number)
 	enemies_remaining = _spawn_queue.size()
 	_spawn_timer = 0.0
-	GameState.set_wave(wave_number)
 	emit_signal("wave_started", wave_number)
 
 

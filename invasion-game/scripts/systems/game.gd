@@ -5,6 +5,7 @@ extends Node2D
 @onready var coin_vacuum: CoinVacuum = $CoinVacuum
 @onready var center_piece: CenterPiece = $CenterPiece
 @onready var hud: CanvasLayer = $HUD
+@onready var wave_preview: CanvasLayer = $WavePreview
 
 @export var enemy_scene: PackedScene
 @export var tower_scene: PackedScene
@@ -16,10 +17,12 @@ func _ready() -> void:
 	wave_manager.enemy_scene = enemy_scene
 	wave_manager.coin_scene = coin_scene
 	wave_manager.center_piece = center_piece
+	wave_manager.wave_preview = wave_preview
 	wave_manager.init(hex_grid)
 	wave_manager.wave_completed.connect(_on_wave_completed)
 	center_piece.destroyed.connect(_on_game_over)
 	hud.init(center_piece)
+	wave_preview.init(hex_grid)
 
 	await get_tree().create_timer(2.0).timeout
 	wave_manager.start_wave(1)
