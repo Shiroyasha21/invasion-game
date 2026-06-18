@@ -5,7 +5,7 @@ extends Node2D
 @onready var coin_vacuum: CoinVacuum = $CoinVacuum
 @onready var center_piece: CenterPiece = $CenterPiece
 @onready var hud: CanvasLayer = $HUD
-@onready var wave_preview: CanvasLayer = $WavePreview
+@onready var wave_preview: WavePreview = $WavePreview
 
 @export var enemy_scene: PackedScene
 @export var tower_scene: PackedScene

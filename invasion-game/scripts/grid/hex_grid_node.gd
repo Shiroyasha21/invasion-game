@@ -5,10 +5,30 @@ class_name HexGridNode
 @export var grid_radius: int = 4  # rings of hexes around center
 
 var tiles: Dictionary = {}  # Vector2i -> bool (occupied)
+var highlighted_hexes: Array[Vector2i] = []
+var _highlight_pulse: float = 0.0
 
 
 func _ready() -> void:
 	_generate_tiles()
+
+
+func _process(delta: float) -> void:
+	if highlighted_hexes.is_empty():
+		return
+	_highlight_pulse += delta
+	queue_redraw()
+
+
+func set_highlights(hexes: Array[Vector2i]) -> void:
+	highlighted_hexes = hexes
+	_highlight_pulse = 0.0
+	queue_redraw()
+
+
+func clear_highlights() -> void:
+	highlighted_hexes = []
+	queue_redraw()
 
 
 func _generate_tiles() -> void:
@@ -19,14 +39,23 @@ func _generate_tiles() -> void:
 
 
 func _draw() -> void:
+	var pulse := (sin(_highlight_pulse * 3.0) + 1.0) / 2.0
+
 	for hex in tiles.keys():
 		var center := HexGrid.hex_to_pixel(hex, hex_size)
 		var pts := HexGrid.corners(center, hex_size)
-		# Fill
-		var color := Color(0.15, 0.18, 0.25) if hex != Vector2i.ZERO else Color(0.3, 0.2, 0.5)
-		draw_colored_polygon(pts, color)
-		# Outline
-		draw_polyline(pts + PackedVector2Array([pts[0]]), Color(0.4, 0.5, 0.7, 0.6), 1.5)
+
+		var fill_color := Color(0.15, 0.18, 0.25)
+		if hex == Vector2i.ZERO:
+			fill_color = Color(0.3, 0.2, 0.5)
+		elif hex in highlighted_hexes:
+			fill_color = Color(0.8, 0.3, 0.1, 0.4 + pulse * 0.4)
+
+		draw_colored_polygon(pts, fill_color)
+
+		var outline_color := Color(1.0, 0.4, 0.1, 0.9) if hex in highlighted_hexes else Color(0.4, 0.5, 0.7, 0.6)
+		var outline_width := 3.0 if hex in highlighted_hexes else 1.5
+		draw_polyline(pts + PackedVector2Array([pts[0]]), outline_color, outline_width)
 
 
 func hex_at_pixel(pos: Vector2) -> Vector2i:
