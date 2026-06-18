@@ -80,7 +80,7 @@ func _spawn_hex_for_direction(dir: int) -> Vector2i:
 	var radius := hex_grid.grid_radius + 1
 	var ring := HexGrid.ring(Vector2i.ZERO, radius)
 	# Pick the hex in the ring closest to the given axial direction
-	var dir_vec := HexGrid.DIRECTIONS[dir]
+	var dir_vec: Vector2i = HexGrid.DIRECTIONS[dir]
 	var best := ring[0]
 	var best_dot := -INF
 	for h in ring:
