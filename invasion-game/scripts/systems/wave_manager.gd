@@ -15,7 +15,7 @@ var current_wave: int = 0
 var enemies_remaining: int = 0
 var _spawn_timer: float = 0.0
 var _spawn_queue: Array[Dictionary] = []
-var _precomputed_paths: Dictionary = {}  # dir -> Array[Vector2]
+var _precomputed_paths: Dictionary = {}  # dir -> PathData
 
 
 func init(grid: HexGridNode) -> void:
@@ -33,7 +33,8 @@ func start_wave(wave_number: int) -> void:
 	for dir in dirs:
 		var spawn_hex := _spawn_hex_for_direction(dir)
 		spawn_hexes.append(spawn_hex)
-		_precomputed_paths[dir] = _compute_pixel_path(spawn_hex, Vector2i.ZERO)
+		var points := _compute_pixel_path(spawn_hex, Vector2i.ZERO)
+		_precomputed_paths[dir] = PathData.make(PathData.Type.STRAIGHT, spawn_hex, points)
 
 	if wave_preview != null:
 		wave_preview.show_preview(spawn_hexes)
@@ -86,15 +87,15 @@ func _spawn_next() -> void:
 
 	var data: Dictionary = _spawn_queue.pop_front()
 	var dir: int = data["dir"]
-	var path: Array[Vector2] = _precomputed_paths.get(dir, [])
-	var spawn_px := path[0] if path.size() > 0 else hex_grid.hex_grid_to_pixel(_spawn_hex_for_direction(dir))
+	var path_data: PathData = _precomputed_paths.get(dir, null)
+	var spawn_px := path_data.points[0] if path_data and path_data.points.size() > 0 else hex_grid.hex_grid_to_pixel(_spawn_hex_for_direction(dir))
 
 	var enemy: EnemyBase = enemy_scene.instantiate()
 	enemy.coin_scene = coin_scene
 	get_parent().add_child(enemy)
 	enemy.died.connect(_on_enemy_died)
 	enemy.reached_center.connect(_on_enemy_died.bind(Vector2.ZERO))
-	enemy.init_with_path(hex_grid, spawn_px, path, center_piece)
+	enemy.init_with_path(hex_grid, spawn_px, path_data, center_piece)
 
 
 func _spawn_hex_for_direction(dir: int) -> Vector2i:

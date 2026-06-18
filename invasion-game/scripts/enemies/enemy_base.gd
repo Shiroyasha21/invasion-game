@@ -7,7 +7,7 @@ class_name EnemyBase
 @export var damage_to_center: float = 10.0
 
 var current_health: float
-var path: Array[Vector2] = []
+var path_data: PathData = null
 var path_index: int = 0
 var hex_grid: HexGridNode
 var center_piece: CenterPiece
@@ -22,20 +22,20 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, 20.0, Color(0.9, 0.2, 0.2))
 
 
-func init_with_path(grid: HexGridNode, spawn_pixel: Vector2, precomputed_path: Array[Vector2], cp: CenterPiece = null) -> void:
+func init_with_path(grid: HexGridNode, spawn_pixel: Vector2, pd: PathData, cp: CenterPiece = null) -> void:
 	hex_grid = grid
 	center_piece = cp
 	global_position = spawn_pixel
-	path = precomputed_path
+	path_data = pd
 	path_index = 0
 
 
 func _process(_delta: float) -> void:
-	if path_index >= path.size():
+	if path_data == null or path_index >= path_data.points.size():
 		_on_reached_center()
 		return
 
-	var target_pos := path[path_index]
+	var target_pos := path_data.points[path_index]
 	var direction := (target_pos - global_position).normalized()
 	var distance := global_position.distance_to(target_pos)
 
