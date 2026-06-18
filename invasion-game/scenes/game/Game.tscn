@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://2cu3abp8xex7"]
+
+[ext_resource type="PackedScene" uid="uid://cwej1qv7p6435" path="res://scripts/grid/HexGrid.tscn" id="1_klkup"]
+
+[node name="Game" type="Node2D" unique_id=1724296568]
+
+[node name="HexGrid" parent="." unique_id=1164585603 instance=ExtResource("1_klkup")]
+position = Vector2(540, 960)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1840679253]
+position = Vector2(540, 960)
