@@ -4,10 +4,14 @@
 [ext_resource type="Script" uid="uid://d3ujb8th16sna" path="res://scripts/systems/game.gd" id="1_vrspl"]
 [ext_resource type="PackedScene" uid="uid://ct7vph1868mnf" path="res://scenes/enemies/EnemyBase.tscn" id="2_7qcb4"]
 [ext_resource type="Script" uid="uid://begdpf6s4de2" path="res://scripts/systems/wave_manager.gd" id="3_7qcb4"]
+[ext_resource type="PackedScene" uid="uid://dcepwqpn6k03f" path="res://TowerBase.tscn" id="3_365ku"]
+[ext_resource type="PackedScene" uid="uid://bi8slckpojhvb" path="res://Projectile.tscn" id="4_gg4pt"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
 enemy_scene = ExtResource("2_7qcb4")
+tower_scene = ExtResource("3_365ku")
+projectile_scene = ExtResource("4_gg4pt")
 
 [node name="HexGrid" parent="." unique_id=1164585603 instance=ExtResource("1_klkup")]
 
