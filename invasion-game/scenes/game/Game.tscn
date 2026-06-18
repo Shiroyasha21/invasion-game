@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://knh1ebtew6pi" path="res://scripts/systems/coin_vacuum.gd" id="7_gg4pt"]
 [ext_resource type="Script" uid="uid://4x0jo51emoms" path="res://scripts/grid/center_piece.gd" id="9_qf6a8"]
 [ext_resource type="PackedScene" uid="uid://bgus08iljs8r" path="res://scenes/ui/HUD.tscn" id="10_56wml"]
+[ext_resource type="PackedScene" uid="uid://3ko4uuuucqvr" path="res://scenes/ui/WavePreview.tscn" id="11_aptqa"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
@@ -32,3 +33,5 @@ script = ExtResource("7_gg4pt")
 script = ExtResource("9_qf6a8")
 
 [node name="HUD" parent="." unique_id=1012788880 instance=ExtResource("10_56wml")]
+
+[node name="WavePreview" parent="." unique_id=973536915 instance=ExtResource("11_aptqa")]

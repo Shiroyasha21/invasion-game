@@ -19,3 +19,4 @@ invasion-game/Projectile.tscn
 invasion-game/TowerBase.tscn
 invasion-game/CenterPiece.tscn
 invasion-game/HUD.tscn
+WavePreview.tscn
