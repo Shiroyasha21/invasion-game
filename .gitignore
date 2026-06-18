@@ -17,3 +17,5 @@ invasion-game/Coin.tscn
 invasion-game/CoinVacuum.tscn
 invasion-game/Projectile.tscn
 invasion-game/TowerBase.tscn
+invasion-game/CenterPiece.tscn
+invasion-game/HUD.tscn
