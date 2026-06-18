@@ -33,6 +33,10 @@ func hex_at_pixel(pos: Vector2) -> Vector2i:
 	return HexGrid.pixel_to_hex(pos - global_position, hex_size)
 
 
+func hex_grid_to_pixel(hex: Vector2i) -> Vector2:
+	return HexGrid.hex_to_pixel(hex, hex_size) + global_position
+
+
 func is_valid_tile(hex: Vector2i) -> bool:
 	return tiles.has(hex)
 
