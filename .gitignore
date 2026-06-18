@@ -11,3 +11,9 @@ export/
 # OS
 .DS_Store
 Thumbs.db
+
+# Godot root-level scene duplicates (saved by editor outside scenes/)
+invasion-game/Coin.tscn
+invasion-game/CoinVacuum.tscn
+invasion-game/Projectile.tscn
+invasion-game/TowerBase.tscn

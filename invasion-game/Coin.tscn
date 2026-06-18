@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://dg2d6jyqddyd4"]
-
-[ext_resource type="Script" uid="uid://bm58o7rsdk4cx" path="res://scripts/systems/coin.gd" id="1_h5dih"]
-
-[node name="Coin" type="Node2D" unique_id=663671565]
-script = ExtResource("1_h5dih")
