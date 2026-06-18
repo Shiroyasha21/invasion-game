@@ -3,6 +3,7 @@ extends Node2D
 @onready var hex_grid: HexGridNode = $HexGrid
 @onready var wave_manager: WaveManager = $WaveManager
 @onready var coin_vacuum: CoinVacuum = $CoinVacuum
+@onready var center_piece: CenterPiece = $CenterPiece
 
 @export var enemy_scene: PackedScene
 @export var tower_scene: PackedScene
@@ -13,8 +14,10 @@ extends Node2D
 func _ready() -> void:
 	wave_manager.enemy_scene = enemy_scene
 	wave_manager.coin_scene = coin_scene
+	wave_manager.center_piece = center_piece
 	wave_manager.init(hex_grid)
 	wave_manager.wave_completed.connect(_on_wave_completed)
+	center_piece.destroyed.connect(_on_game_over)
 
 	await get_tree().create_timer(2.0).timeout
 	wave_manager.start_wave(1)
@@ -36,7 +39,7 @@ func _try_place_tower(screen_pos: Vector2) -> void:
 	if hex_grid.is_occupied(hex):
 		return
 	if hex == Vector2i.ZERO:
-		return  # don't place on center
+		return
 
 	var tower: TowerBase = tower_scene.instantiate()
 	tower.projectile_scene = projectile_scene
@@ -48,3 +51,8 @@ func _try_place_tower(screen_pos: Vector2) -> void:
 func _on_wave_completed(wave_number: int) -> void:
 	await get_tree().create_timer(3.0).timeout
 	wave_manager.start_wave(wave_number + 1)
+
+
+func _on_game_over() -> void:
+	get_tree().paused = true
+	print("GAME OVER")

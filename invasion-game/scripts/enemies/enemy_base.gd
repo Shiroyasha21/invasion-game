@@ -5,10 +5,13 @@ class_name EnemyBase
 @export var max_health: float = 30.0
 @export var coin_scene: PackedScene
 
+@export var damage_to_center: float = 10.0
+
 var current_health: float
 var path: Array[Vector2] = []
 var path_index: int = 0
 var hex_grid: HexGridNode
+var center_piece: CenterPiece
 
 
 func _ready() -> void:
@@ -20,8 +23,9 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, 20.0, Color(0.9, 0.2, 0.2))
 
 
-func init(grid: HexGridNode, spawn_pixel: Vector2, target_hex: Vector2i) -> void:
+func init(grid: HexGridNode, spawn_pixel: Vector2, target_hex: Vector2i, cp: CenterPiece = null) -> void:
 	hex_grid = grid
+	center_piece = cp
 	global_position = spawn_pixel
 	_build_path(target_hex)
 
@@ -70,6 +74,8 @@ func _drop_coin() -> void:
 
 
 func _on_reached_center() -> void:
+	if center_piece != null:
+		center_piece.take_damage(damage_to_center)
 	emit_signal("reached_center")
 	queue_free()
 

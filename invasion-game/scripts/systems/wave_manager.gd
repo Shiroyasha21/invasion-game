@@ -9,6 +9,7 @@ signal wave_completed(wave_number: int)
 
 var hex_grid: HexGridNode
 var coin_scene: PackedScene
+var center_piece: CenterPiece
 var current_wave: int = 0
 var enemies_remaining: int = 0
 var _spawn_timer: float = 0.0
@@ -75,7 +76,7 @@ func _spawn_next() -> void:
 	get_parent().add_child(enemy)
 	enemy.died.connect(_on_enemy_died)
 	enemy.reached_center.connect(_on_enemy_died.bind(Vector2.ZERO))
-	enemy.init(hex_grid, spawn_px, Vector2i.ZERO)
+	enemy.init(hex_grid, spawn_px, Vector2i.ZERO, center_piece)
 
 
 func _spawn_hex_for_direction(dir: int) -> Vector2i:
