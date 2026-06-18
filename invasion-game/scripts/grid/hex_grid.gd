@@ -47,7 +47,7 @@ static func axial_round(frac: Vector2) -> Vector2i:
 
 static func distance(a: Vector2i, b: Vector2i) -> int:
 	var d := b - a
-	return int((absi(d.x) + absi(d.x + d.y) + absi(d.y)) / 2)
+	return (absi(d.x) + absi(d.x + d.y) + absi(d.y)) >> 1
 
 
 static func neighbor(hex: Vector2i, dir: int) -> Vector2i:
