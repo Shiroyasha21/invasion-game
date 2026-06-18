@@ -15,6 +15,7 @@ var current_wave: int = 0
 var enemies_remaining: int = 0
 var _spawn_timer: float = 0.0
 var _spawn_queue: Array[Dictionary] = []
+var _precomputed_paths: Dictionary = {}  # dir -> Array[Vector2]
 
 
 func init(grid: HexGridNode) -> void:
@@ -25,12 +26,16 @@ func start_wave(wave_number: int) -> void:
 	current_wave = wave_number
 	GameState.set_wave(wave_number)
 
-	# Show direction preview then start spawning
+	# Pre-compute one path per active direction
 	var dirs := _active_directions(wave_number)
+	_precomputed_paths.clear()
+	var spawn_hexes: Array[Vector2i] = []
+	for dir in dirs:
+		var spawn_hex := _spawn_hex_for_direction(dir)
+		spawn_hexes.append(spawn_hex)
+		_precomputed_paths[dir] = _compute_pixel_path(spawn_hex, Vector2i.ZERO)
+
 	if wave_preview != null:
-		var spawn_hexes: Array[Vector2i] = []
-		for dir in dirs:
-			spawn_hexes.append(_spawn_hex_for_direction(dir))
 		wave_preview.show_preview(spawn_hexes)
 		await get_tree().create_timer(3.0).timeout
 		wave_preview.hide_preview()
@@ -81,15 +86,15 @@ func _spawn_next() -> void:
 
 	var data: Dictionary = _spawn_queue.pop_front()
 	var dir: int = data["dir"]
-	var spawn_hex := _spawn_hex_for_direction(dir)
-	var spawn_px := hex_grid.hex_grid_to_pixel(spawn_hex)
+	var path: Array[Vector2] = _precomputed_paths.get(dir, [])
+	var spawn_px := path[0] if path.size() > 0 else hex_grid.hex_grid_to_pixel(_spawn_hex_for_direction(dir))
 
 	var enemy: EnemyBase = enemy_scene.instantiate()
 	enemy.coin_scene = coin_scene
 	get_parent().add_child(enemy)
 	enemy.died.connect(_on_enemy_died)
 	enemy.reached_center.connect(_on_enemy_died.bind(Vector2.ZERO))
-	enemy.init(hex_grid, spawn_px, Vector2i.ZERO, center_piece)
+	enemy.init_with_path(hex_grid, spawn_px, path, center_piece)
 
 
 func _spawn_hex_for_direction(dir: int) -> Vector2i:
@@ -106,6 +111,37 @@ func _spawn_hex_for_direction(dir: int) -> Vector2i:
 			best_dot = dot
 			best = h
 	return best
+
+
+func _compute_pixel_path(start: Vector2i, goal: Vector2i) -> Array[Vector2]:
+	var open: Array = [start]
+	var came_from: Dictionary = {}
+	var g_score: Dictionary = {start: 0}
+	var f_score: Dictionary = {start: HexGrid.distance(start, goal)}
+
+	while open.size() > 0:
+		var current: Vector2i = open[0]
+		for node in open:
+			if f_score.get(node, INF) < f_score.get(current, INF):
+				current = node
+		if current == goal:
+			var path: Array[Vector2] = []
+			var node := current
+			while came_from.has(node):
+				path.push_front(hex_grid.hex_grid_to_pixel(node))
+				node = came_from[node]
+			path.push_front(hex_grid.hex_grid_to_pixel(start))
+			return path
+		open.erase(current)
+		for neighbor in HexGrid.neighbors(current):
+			var tentative_g: int = g_score.get(current, INF) + 1
+			if tentative_g < g_score.get(neighbor, INF):
+				came_from[neighbor] = current
+				g_score[neighbor] = tentative_g
+				f_score[neighbor] = tentative_g + HexGrid.distance(neighbor, goal)
+				if neighbor not in open:
+					open.append(neighbor)
+	return []
 
 
 func _on_enemy_died(_pos: Vector2) -> void:

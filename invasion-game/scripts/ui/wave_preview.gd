@@ -11,14 +11,17 @@ func init(grid: HexGridNode) -> void:
 func show_preview(spawn_hexes: Array[Vector2i]) -> void:
 	var hexes: Array[Vector2i] = []
 	for spawn in spawn_hexes:
-		var path := _astar_hex_path(spawn, Vector2i.ZERO)
-		for hex in path:
+		for hex in _hex_path(spawn, Vector2i.ZERO):
 			if hex not in hexes:
 				hexes.append(hex)
 	_hex_grid.set_highlights(hexes)
 
 
-func _astar_hex_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
+func hide_preview() -> void:
+	_hex_grid.clear_highlights()
+
+
+func _hex_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 	var open: Array = [start]
 	var came_from: Dictionary = {}
 	var g_score: Dictionary = {start: 0}
@@ -46,7 +49,3 @@ func _astar_hex_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
 				if neighbor not in open:
 					open.append(neighbor)
 	return []
-
-
-func hide_preview() -> void:
-	_hex_grid.clear_highlights()

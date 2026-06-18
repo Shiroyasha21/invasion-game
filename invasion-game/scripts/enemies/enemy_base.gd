@@ -4,7 +4,6 @@ class_name EnemyBase
 @export var move_speed: float = 80.0
 @export var max_health: float = 30.0
 @export var coin_scene: PackedScene
-
 @export var damage_to_center: float = 10.0
 
 var current_health: float
@@ -23,19 +22,15 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, 20.0, Color(0.9, 0.2, 0.2))
 
 
-func init(grid: HexGridNode, spawn_pixel: Vector2, target_hex: Vector2i, cp: CenterPiece = null) -> void:
+func init_with_path(grid: HexGridNode, spawn_pixel: Vector2, precomputed_path: Array[Vector2], cp: CenterPiece = null) -> void:
 	hex_grid = grid
 	center_piece = cp
 	global_position = spawn_pixel
-	_build_path(target_hex)
+	path = precomputed_path
+	path_index = 0
 
 
-func _build_path(target_hex: Vector2i) -> void:
-	var start_hex := hex_grid.hex_at_pixel(global_position)
-	path = _astar_path(start_hex, target_hex)
-
-
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if path_index >= path.size():
 		_on_reached_center()
 		return
@@ -82,42 +77,3 @@ func _on_reached_center() -> void:
 
 signal died(position: Vector2)
 signal reached_center
-
-
-# A* pathfinding on the hex grid to target
-func _astar_path(start: Vector2i, goal: Vector2i) -> Array[Vector2]:
-	var open: Array = [start]
-	var came_from: Dictionary = {}
-	var g_score: Dictionary = {start: 0}
-	var f_score: Dictionary = {start: HexGrid.distance(start, goal)}
-
-	while open.size() > 0:
-		var current: Vector2i = open[0]
-		for node in open:
-			if f_score.get(node, INF) < f_score.get(current, INF):
-				current = node
-
-		if current == goal:
-			return _reconstruct_path(came_from, current)
-
-		open.erase(current)
-
-		for neighbor in HexGrid.neighbors(current):
-			var tentative_g: int = g_score.get(current, INF) + 1
-			if tentative_g < g_score.get(neighbor, INF):
-				came_from[neighbor] = current
-				g_score[neighbor] = tentative_g
-				f_score[neighbor] = tentative_g + HexGrid.distance(neighbor, goal)
-				if neighbor not in open:
-					open.append(neighbor)
-
-	return []
-
-
-func _reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2]:
-	var result: Array[Vector2] = []
-	var node := current
-	while came_from.has(node):
-		result.push_front(hex_grid.hex_grid_to_pixel(node))
-		node = came_from[node]
-	return result
