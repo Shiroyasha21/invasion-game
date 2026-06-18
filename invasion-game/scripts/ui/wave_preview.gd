@@ -8,16 +8,44 @@ func init(grid: HexGridNode) -> void:
 	_hex_grid = grid
 
 
-func show_preview(directions: Array[int]) -> void:
+func show_preview(spawn_hexes: Array[Vector2i]) -> void:
 	var hexes: Array[Vector2i] = []
-	for dir in directions:
-		var dir_vec: Vector2i = HexGrid.DIRECTIONS[dir]
-		# Trace the straight corridor from edge to center along this direction axis
-		for r in range(1, _hex_grid.grid_radius + 1):
-			var hex := Vector2i(dir_vec.x * r, dir_vec.y * r)
-			if _hex_grid.is_valid_tile(hex) and hex not in hexes:
+	for spawn in spawn_hexes:
+		var path := _astar_hex_path(spawn, Vector2i.ZERO)
+		for hex in path:
+			if hex not in hexes:
 				hexes.append(hex)
 	_hex_grid.set_highlights(hexes)
+
+
+func _astar_hex_path(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
+	var open: Array = [start]
+	var came_from: Dictionary = {}
+	var g_score: Dictionary = {start: 0}
+	var f_score: Dictionary = {start: HexGrid.distance(start, goal)}
+
+	while open.size() > 0:
+		var current: Vector2i = open[0]
+		for node in open:
+			if f_score.get(node, INF) < f_score.get(current, INF):
+				current = node
+		if current == goal:
+			var path: Array[Vector2i] = []
+			var node := current
+			while came_from.has(node):
+				path.push_front(node)
+				node = came_from[node]
+			return path
+		open.erase(current)
+		for neighbor in HexGrid.neighbors(current):
+			var tentative_g: int = g_score.get(current, INF) + 1
+			if tentative_g < g_score.get(neighbor, INF):
+				came_from[neighbor] = current
+				g_score[neighbor] = tentative_g
+				f_score[neighbor] = tentative_g + HexGrid.distance(neighbor, goal)
+				if neighbor not in open:
+					open.append(neighbor)
+	return []
 
 
 func hide_preview() -> void:

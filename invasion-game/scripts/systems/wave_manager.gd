@@ -28,7 +28,10 @@ func start_wave(wave_number: int) -> void:
 	# Show direction preview then start spawning
 	var dirs := _active_directions(wave_number)
 	if wave_preview != null:
-		wave_preview.show_preview(dirs)
+		var spawn_hexes: Array[Vector2i] = []
+		for dir in dirs:
+			spawn_hexes.append(_spawn_hex_for_direction(dir))
+		wave_preview.show_preview(spawn_hexes)
 		await get_tree().create_timer(3.0).timeout
 		wave_preview.hide_preview()
 
