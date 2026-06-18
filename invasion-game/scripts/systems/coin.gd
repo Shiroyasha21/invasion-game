@@ -11,8 +11,8 @@ const BOB_AMOUNT := 6.0
 const SUCK_SPEED := 500.0
 
 
-func _ready() -> void:
-	_origin = global_position
+func set_origin(pos: Vector2) -> void:
+	_origin = pos
 
 
 func _process(delta: float) -> void:

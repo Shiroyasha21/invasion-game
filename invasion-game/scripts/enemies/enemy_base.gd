@@ -66,6 +66,7 @@ func _drop_coin() -> void:
 	get_tree().current_scene.add_child(coin)
 	coin.global_position = global_position
 	coin.add_to_group("coins")
+	coin.set_origin(global_position)
 
 
 func _on_reached_center() -> void:
