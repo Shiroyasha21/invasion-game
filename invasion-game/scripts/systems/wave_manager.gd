@@ -64,7 +64,7 @@ func _spawn_next() -> void:
 	if _spawn_queue.is_empty() or enemy_scene == null:
 		return
 
-	var data := _spawn_queue.pop_front()
+	var data: Dictionary = _spawn_queue.pop_front()
 	var dir: int = data["dir"]
 	var spawn_hex := _spawn_hex_for_direction(dir)
 	var spawn_px := hex_grid.hex_grid_to_pixel(spawn_hex)
