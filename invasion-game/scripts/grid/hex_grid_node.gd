@@ -13,6 +13,11 @@ func _ready() -> void:
 	_generate_tiles()
 
 
+func expand() -> void:
+	grid_radius += 1
+	_generate_tiles()
+
+
 func _process(delta: float) -> void:
 	if highlighted_hexes.is_empty():
 		return

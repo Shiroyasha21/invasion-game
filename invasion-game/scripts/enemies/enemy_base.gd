@@ -6,11 +6,16 @@ class_name EnemyBase
 @export var coin_scene: PackedScene
 @export var damage_to_center: float = 10.0
 
+@export var attack_damage: float = 8.0
+@export var attack_speed: float = 1.0
+
 var current_health: float
 var path_data: PathData = null
 var path_index: int = 0
 var hex_grid: HexGridNode
 var center_piece: CenterPiece
+var _blocked_by: TowerBase = null
+var _attack_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -30,10 +35,23 @@ func init_with_path(grid: HexGridNode, spawn_pixel: Vector2, pd: PathData, cp: C
 	path_index = 0
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if path_data == null or path_index >= path_data.points.size():
 		_on_reached_center()
 		return
+
+	# Check if blocked by a tower
+	if _blocked_by != null:
+		if not is_instance_valid(_blocked_by):
+			_blocked_by = null
+		else:
+			_attack_timer -= delta
+			if _attack_timer <= 0.0:
+				_blocked_by.take_damage(attack_damage)
+				_attack_timer = 1.0 / attack_speed
+			velocity = Vector2.ZERO
+			move_and_slide()
+			return
 
 	var target_pos := path_data.points[path_index]
 	var direction := (target_pos - global_position).normalized()
@@ -42,8 +60,22 @@ func _process(_delta: float) -> void:
 	if distance < 4.0:
 		path_index += 1
 	else:
-		velocity = direction * move_speed
-		move_and_slide()
+		# Check if next waypoint hex has a tower
+		var next_hex := hex_grid.hex_at_pixel(target_pos)
+		var tower := _find_tower_at(next_hex)
+		if tower != null:
+			_blocked_by = tower
+			_attack_timer = 0.0
+		else:
+			velocity = direction * move_speed
+			move_and_slide()
+
+
+func _find_tower_at(hex: Vector2i) -> TowerBase:
+	for node in get_tree().get_nodes_in_group("towers"):
+		if node is TowerBase and node.occupied_hex == hex:
+			return node
+	return null
 
 
 func take_damage(amount: float) -> void:
