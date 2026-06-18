@@ -55,4 +55,4 @@ func _on_wave_completed(wave_number: int) -> void:
 
 func _on_game_over() -> void:
 	get_tree().paused = true
-	print("GAME OVER")
+	print("GAME OVER — coins collected: %d" % GameState.coins)

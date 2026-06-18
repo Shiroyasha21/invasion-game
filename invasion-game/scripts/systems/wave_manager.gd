@@ -25,6 +25,7 @@ func start_wave(wave_number: int) -> void:
 	_spawn_queue = _build_spawn_queue(wave_number)
 	enemies_remaining = _spawn_queue.size()
 	_spawn_timer = 0.0
+	GameState.set_wave(wave_number)
 	emit_signal("wave_started", wave_number)
 
 

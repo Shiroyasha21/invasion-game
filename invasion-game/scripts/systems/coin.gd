@@ -19,6 +19,7 @@ func _process(delta: float) -> void:
 	if _sucked:
 		global_position = global_position.move_toward(_suck_target, SUCK_SPEED * delta)
 		if global_position.distance_to(_suck_target) < 8.0:
+			GameState.add_coins(1)
 			queue_free()
 	else:
 		_bob_timer += delta
