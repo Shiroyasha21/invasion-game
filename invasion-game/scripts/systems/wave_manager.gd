@@ -10,7 +10,7 @@ signal wave_completed(wave_number: int)
 var hex_grid: HexGridNode
 var coin_scene: PackedScene
 var center_piece: CenterPiece
-var wave_preview: CanvasLayer
+var wave_preview: WavePreview
 var current_wave: int = 0
 var enemies_remaining: int = 0
 var _spawn_timer: float = 0.0
