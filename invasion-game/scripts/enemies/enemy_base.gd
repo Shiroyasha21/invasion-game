@@ -14,10 +14,6 @@ var hex_grid: HexGridNode
 func _ready() -> void:
 	current_health = max_health
 	add_to_group("enemies")
-	# Placeholder visual — red circle
-	var circle := ColorRect.new()
-	# Use a small polygon instead since ColorRect doesn't scale as circle
-	pass
 
 
 func _draw() -> void:
