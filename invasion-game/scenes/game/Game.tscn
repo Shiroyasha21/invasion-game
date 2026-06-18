@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://begdpf6s4de2" path="res://scripts/systems/wave_manager.gd" id="3_7qcb4"]
 [ext_resource type="PackedScene" uid="uid://dcepwqpn6k03f" path="res://scenes/towers/TowerBase.tscn" id="3_365ku"]
 [ext_resource type="PackedScene" uid="uid://bi8slckpojhvb" path="res://scenes/towers/Projectile.tscn" id="4_gg4pt"]
+[ext_resource type="Script" uid="uid://knh1ebtew6pi" path="res://scripts/systems/coin_vacuum.gd" id="7_gg4pt"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
@@ -19,3 +20,6 @@ projectile_scene = ExtResource("4_gg4pt")
 
 [node name="WaveManager" type="Node" parent="." unique_id=381729001]
 script = ExtResource("3_7qcb4")
+
+[node name="CoinVacuum" type="Node2D" parent="." unique_id=1679448892]
+script = ExtResource("7_gg4pt")

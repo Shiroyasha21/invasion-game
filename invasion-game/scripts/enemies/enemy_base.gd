@@ -58,7 +58,18 @@ func take_damage(amount: float) -> void:
 
 func _die() -> void:
 	emit_signal("died", global_position)
+	_drop_coin()
 	queue_free()
+
+
+func _drop_coin() -> void:
+	var coin_scene := load("res://scenes/systems/Coin.tscn") as PackedScene
+	if coin_scene == null:
+		return
+	var coin: Coin = coin_scene.instantiate()
+	get_tree().current_scene.add_child(coin)
+	coin.global_position = global_position
+	coin.add_to_group("coins")
 
 
 func _on_reached_center() -> void:

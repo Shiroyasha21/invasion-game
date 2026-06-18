@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var hex_grid: HexGridNode = $HexGrid
 @onready var wave_manager: WaveManager = $WaveManager
+@onready var coin_vacuum: CoinVacuum = $CoinVacuum
 
 @export var enemy_scene: PackedScene
 @export var tower_scene: PackedScene
