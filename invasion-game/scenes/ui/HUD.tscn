@@ -24,3 +24,15 @@ layout_mode = 2
 
 [node name="HPLabel" type="Label" parent="MarginContainer/VBox" unique_id=583650288]
 layout_mode = 2
+
+[node name="ShovelButton" type="Button" parent="." unique_id=2074901135]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -62.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "🪣 Sell"

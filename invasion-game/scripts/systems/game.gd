@@ -1,11 +1,14 @@
 extends Node2D
 
+const GRID_UNLOCK_INTERVAL := 5  # waves between grid reveals
+
 @onready var hex_grid: HexGridNode = $HexGrid
 @onready var wave_manager: WaveManager = $WaveManager
 @onready var coin_vacuum: CoinVacuum = $CoinVacuum
 @onready var center_piece: CenterPiece = $CenterPiece
 @onready var hud: CanvasLayer = $HUD
 @onready var wave_preview: WavePreview = $WavePreview
+@onready var camera: CameraZoom = $Camera2D
 
 @export var enemy_scene: PackedScene
 @export var tower_scene: PackedScene
@@ -26,6 +29,9 @@ func _ready() -> void:
 	center_piece.level_up.connect(_on_centerpiece_level_up)
 	hud.init(center_piece, self)
 	wave_preview.init(hex_grid)
+
+	hex_grid.unlocked_radius_changed.connect(_on_unlocked_radius_changed)
+	camera.set_unlock_progress(hex_grid.unlocked_radius, hex_grid.max_grid_radius)
 
 	await get_tree().create_timer(2.0).timeout
 	wave_manager.start_wave(1)
@@ -78,8 +84,6 @@ func _try_sell_tower(hex: Vector2i) -> void:
 			GameState.add_coins(refund)
 			hex_grid.set_occupied(hex, false)
 			tower.queue_free()
-			_shovel_mode = false
-			hud.set_shovel_active(false)
 			return
 
 
@@ -89,13 +93,19 @@ func _on_tower_destroyed(hex: Vector2i) -> void:
 
 func _on_wave_completed(wave_number: int) -> void:
 	center_piece.on_wave_completed()
+	if wave_number % GRID_UNLOCK_INTERVAL == 0:
+		hex_grid.unlock_more()
 	await get_tree().create_timer(3.0).timeout
 	wave_manager.start_wave(wave_number + 1)
 
 
+func _on_unlocked_radius_changed(new_radius: int) -> void:
+	camera.set_unlock_progress(new_radius, hex_grid.max_grid_radius)
+	print("Grid unlocked — radius now %d" % new_radius)
+
+
 func _on_centerpiece_level_up(new_level: int) -> void:
-	hex_grid.expand()
-	print("Tree grew to level %d — grid expanded!" % new_level)
+	print("Tree grew to level %d" % new_level)
 
 
 func _on_game_over() -> void:

@@ -2,5 +2,13 @@
 
 [ext_resource type="Script" uid="uid://c5i01ughhnykl" path="res://scripts/towers/tower_base.gd" id="1_m3t3g"]
 
-[node name="TowerBase" type="Node2D" unique_id=364181284]
+[sub_resource type="CircleShape2D" id="CircleShape2D_twrcol"]
+radius = 28.0
+
+[node name="TowerBase" type="StaticBody2D" unique_id=364181284]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1_m3t3g")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=364181285]
+shape = SubResource("CircleShape2D_twrcol")

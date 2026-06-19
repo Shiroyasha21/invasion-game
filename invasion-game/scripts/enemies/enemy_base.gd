@@ -10,9 +10,7 @@ class_name EnemyBase
 @export var attack_speed: float = 1.0
 
 var current_health: float
-var path_data: PathData = null
-var path_index: int = 0
-var hex_grid: HexGridNode
+var target_position: Vector2 = Vector2.ZERO
 var center_piece: CenterPiece
 var _blocked_by: TowerBase = null
 var _attack_timer: float = 0.0
@@ -27,20 +25,13 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, 20.0, Color(0.9, 0.2, 0.2))
 
 
-func init_with_path(grid: HexGridNode, spawn_pixel: Vector2, pd: PathData, cp: CenterPiece = null) -> void:
-	hex_grid = grid
+func init(spawn_pixel: Vector2, target_pos: Vector2, cp: CenterPiece = null) -> void:
 	center_piece = cp
 	global_position = spawn_pixel
-	path_data = pd
-	path_index = 0
+	target_position = target_pos
 
 
 func _process(delta: float) -> void:
-	if path_data == null or path_index >= path_data.points.size():
-		_on_reached_center()
-		return
-
-	# Check if blocked by a tower
 	if _blocked_by != null:
 		if not is_instance_valid(_blocked_by):
 			_blocked_by = null
@@ -53,29 +44,20 @@ func _process(delta: float) -> void:
 			move_and_slide()
 			return
 
-	var target_pos := path_data.points[path_index]
-	var direction := (target_pos - global_position).normalized()
-	var distance := global_position.distance_to(target_pos)
+	var to_target := target_position - global_position
+	if to_target.length() < 8.0:
+		_on_reached_center()
+		return
 
-	if distance < 4.0:
-		path_index += 1
-	else:
-		# Check if next waypoint hex has a tower
-		var next_hex := hex_grid.hex_at_pixel(target_pos)
-		var tower := _find_tower_at(next_hex)
-		if tower != null:
-			_blocked_by = tower
+	velocity = to_target.normalized() * move_speed
+	move_and_slide()
+
+	for i in get_slide_collision_count():
+		var collider := get_slide_collision(i).get_collider()
+		if collider is TowerBase:
+			_blocked_by = collider
 			_attack_timer = 0.0
-		else:
-			velocity = direction * move_speed
-			move_and_slide()
-
-
-func _find_tower_at(hex: Vector2i) -> TowerBase:
-	for node in get_tree().get_nodes_in_group("towers"):
-		if node is TowerBase and node.occupied_hex == hex:
-			return node
-	return null
+			break
 
 
 func take_damage(amount: float) -> void:
