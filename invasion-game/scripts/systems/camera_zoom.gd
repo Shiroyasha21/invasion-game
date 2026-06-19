@@ -54,3 +54,18 @@ func _current_touch_distance() -> float:
 func _set_zoom(value: float) -> void:
 	var clamped := clampf(value, _zoom_out_floor, max_zoom)
 	zoom = Vector2(clamped, clamped)
+
+
+# Radius (in world units) of the largest area the player could currently see,
+# accounting for how far they're allowed to zoom out right now. Used to keep
+# enemy spawn points reliably off-screen regardless of zoom level.
+func max_visible_radius() -> float:
+	var diagonal := get_viewport_rect().size.length()
+	return (diagonal / 2.0) / _zoom_out_floor
+
+
+# Radius (in world units) of what's visible RIGHT NOW at the current zoom.
+# Used to place warning markers right at the actual screen edge.
+func current_visible_radius() -> float:
+	var diagonal := get_viewport_rect().size.length()
+	return (diagonal / 2.0) / zoom.x

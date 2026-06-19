@@ -12,10 +12,14 @@
 [ext_resource type="Script" uid="uid://4x0jo51emoms" path="res://scripts/grid/center_piece.gd" id="9_qf6a8"]
 [ext_resource type="PackedScene" uid="uid://bgus08iljs8r" path="res://scenes/ui/HUD.tscn" id="10_56wml"]
 [ext_resource type="PackedScene" uid="uid://3ko4uuuucqvr" path="res://scenes/ui/WavePreview.tscn" id="11_aptqa"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/MiniBoss.tscn" id="12_mboss"]
+[ext_resource type="Resource" path="res://resources/minibosses/mboss_1.tres" id="13_mboss1"]
+[ext_resource type="Resource" path="res://resources/minibosses/mboss_2.tres" id="14_mboss2"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
 enemy_scene = ExtResource("2_7qcb4")
+mini_boss_scene = ExtResource("12_mboss")
 tower_scene = ExtResource("3_365ku")
 projectile_scene = ExtResource("4_gg4pt")
 coin_scene = ExtResource("5_wnrko")
@@ -27,6 +31,7 @@ script = ExtResource("7_gynul")
 
 [node name="WaveManager" type="Node" parent="." unique_id=381729001]
 script = ExtResource("3_7qcb4")
+mini_boss_pool = [ExtResource("13_mboss1"), ExtResource("14_mboss2")]
 
 [node name="CoinVacuum" type="Node2D" parent="." unique_id=1679448892]
 script = ExtResource("7_gg4pt")

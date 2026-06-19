@@ -7,11 +7,9 @@ signal level_up(new_level: int)
 
 @export var max_hp: float = 100.0
 @export var hp_per_level: float = 50.0
-@export var waves_per_level: int = 5
 
 var current_hp: float
 var level: int = 1
-var _waves_survived: int = 0
 
 
 func _ready() -> void:
@@ -26,13 +24,9 @@ func take_damage(amount: float) -> void:
 		emit_signal("destroyed")
 
 
-func on_wave_completed() -> void:
-	_waves_survived += 1
-	if _waves_survived % waves_per_level == 0:
-		_grow()
-
-
-func _grow() -> void:
+# Called by the future meta-progression system when the player spends
+# currency to grow the tree between runs.
+func grow() -> void:
 	level += 1
 	max_hp += hp_per_level
 	current_hp = max_hp

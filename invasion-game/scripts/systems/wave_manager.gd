@@ -1,110 +1,117 @@
 extends Node
 class_name WaveManager
 
-signal wave_started(wave_number: int)
-signal wave_completed(wave_number: int)
+signal run_time_updated(elapsed: float)
+signal mini_boss_spawned(boss: MiniBoss)
+signal enemy_killed(total_kills: int)
 
-# Direction angles in radians: N, NE, SE, S, SW, NW (60 degrees apart)
+# Direction angles in degrees: N, NE, SE, S, SW, NW (60 degrees apart)
 const DIRECTION_ANGLES_DEG := [-90.0, -30.0, 30.0, 90.0, 150.0, -150.0]
 const ARC_JITTER_DEG := 25.0
+const SPAWN_MARGIN_TILES := 3.0  # extra tiles beyond the rendered grid so enemies appear off-screen
+
+const BASE_SPAWN_INTERVAL := 2.2
+const MIN_SPAWN_INTERVAL := 0.4
+const DIFFICULTY_GROWTH_PER_MIN := 0.12
+const MINI_BOSS_INTERVAL := 90.0
 
 @export var enemy_scene: PackedScene
-@export var spawn_interval: float = 1.0
+@export var mini_boss_scene: PackedScene
+@export var mini_boss_pool: Array[MiniBossData] = []
 
 var hex_grid: HexGridNode
+var camera: CameraZoom
 var coin_scene: PackedScene
+var projectile_scene: PackedScene
 var center_piece: CenterPiece
 var wave_preview: WavePreview
-var current_wave: int = 0
-var enemies_remaining: int = 0
+
+var running: bool = false
+var elapsed_time: float = 0.0
+var kills: int = 0
+
 var _spawn_timer: float = 0.0
-var _spawn_queue: Array[Array] = []  # each entry: Array[int] of directions firing together
+var _mini_boss_timer: float = MINI_BOSS_INTERVAL
 
 
 func init(grid: HexGridNode) -> void:
 	hex_grid = grid
 
 
-func start_wave(wave_number: int) -> void:
-	current_wave = wave_number
-	GameState.set_wave(wave_number)
+func start_run() -> void:
+	elapsed_time = 0.0
+	kills = 0
+	_spawn_timer = BASE_SPAWN_INTERVAL
+	_mini_boss_timer = MINI_BOSS_INTERVAL
+	running = true
 
-	var dirs := _active_directions(wave_number)
 
-	if wave_preview != null:
-		var preview_points: Array[Vector2] = []
-		for dir in dirs:
-			preview_points.append(_spawn_position(dir, 0.0))
-		wave_preview.show_preview(preview_points)
-		await get_tree().create_timer(3.0).timeout
-		wave_preview.hide_preview()
-
-	_spawn_queue = _build_spawn_queue(wave_number)
-	enemies_remaining = 0
-	for group in _spawn_queue:
-		enemies_remaining += group.size()
-	_spawn_timer = 0.0
-	emit_signal("wave_started", wave_number)
+func stop_run() -> void:
+	running = false
 
 
 func _process(delta: float) -> void:
-	if _spawn_queue.is_empty():
+	if not running:
 		return
+
+	elapsed_time += delta
+	GameState.set_run_time(elapsed_time)
+	emit_signal("run_time_updated", elapsed_time)
+
 	_spawn_timer -= delta
 	if _spawn_timer <= 0.0:
-		_spawn_next()
-		_spawn_timer = spawn_interval
+		_spawn_pulse()
+		_spawn_timer = _current_spawn_interval()
+
+	_mini_boss_timer -= delta
+	if _mini_boss_timer <= 0.0:
+		_spawn_mini_boss()
+		_mini_boss_timer = MINI_BOSS_INTERVAL
 
 
-func _build_spawn_queue(wave: int) -> Array[Array]:
-	var queue: Array[Array] = []
-	var active_dirs: Array[int] = _active_directions(wave)
-	var sync_size := _sync_group_size(wave, active_dirs.size())
-	var pulses := 3 + wave
-	var dir_cursor := 0
-
-	for _i in pulses:
-		var group: Array[int] = []
-		for _j in sync_size:
-			group.append(active_dirs[dir_cursor % active_dirs.size()])
-			dir_cursor += 1
-		queue.append(group)
-	return queue
+func _elapsed_minutes() -> float:
+	return elapsed_time / 60.0
 
 
-func _active_directions(wave: int) -> Array[int]:
-	# Directions: 0=N, 1=NE, 2=SE, 3=S, 4=SW, 5=NW
-	if wave <= 2:
-		return [0]
-	elif wave <= 4:
-		return [0, 3]
-	elif wave <= 6:
-		return [0, 2, 3, 5]
-	else:
-		return [0, 1, 2, 3, 4, 5]
+func _current_spawn_interval() -> float:
+	var t := clampf(_elapsed_minutes() / 8.0, 0.0, 1.0)
+	return lerpf(BASE_SPAWN_INTERVAL, MIN_SPAWN_INTERVAL, t)
 
 
-func _sync_group_size(wave: int, dir_count: int) -> int:
-	# Early waves stagger one direction at a time; later waves fire multiple
-	# directions in the same pulse so the player feels genuinely surrounded.
-	if wave <= 4:
+func _difficulty_multiplier() -> float:
+	return 1.0 + _elapsed_minutes() * DIFFICULTY_GROWTH_PER_MIN
+
+
+func _active_direction_count() -> int:
+	var minutes := _elapsed_minutes()
+	if minutes < 1.0:
 		return 1
-	elif wave <= 6:
-		return mini(2, dir_count)
+	elif minutes < 3.0:
+		return 2
+	elif minutes < 5.0:
+		return 4
 	else:
-		return dir_count
+		return 6
 
 
-func _enemy_difficulty_multiplier() -> float:
-	return 1.0 + float(current_wave - 1) * 0.1
+func _sync_size() -> int:
+	var minutes := _elapsed_minutes()
+	var active := _active_direction_count()
+	if minutes < 3.0:
+		return 1
+	elif minutes < 5.0:
+		return mini(2, active)
+	else:
+		return active
 
 
-func _spawn_next() -> void:
-	if _spawn_queue.is_empty() or enemy_scene == null:
+func _spawn_pulse() -> void:
+	if enemy_scene == null:
 		return
-
-	var group: Array = _spawn_queue.pop_front()
-	for dir in group:
+	var active := _active_direction_count()
+	var count := _sync_size()
+	for _i in count:
+		var dir := randi() % active
 		_spawn_enemy(dir)
 
 
@@ -113,24 +120,67 @@ func _spawn_enemy(dir: int) -> void:
 	var target_pos := center_piece.global_position if center_piece != null else hex_grid.global_position
 
 	var enemy: EnemyBase = enemy_scene.instantiate()
-	var difficulty := _enemy_difficulty_multiplier()
+	var difficulty := _difficulty_multiplier()
 	enemy.coin_scene = coin_scene
 	enemy.max_health *= difficulty
 	enemy.attack_damage *= difficulty
 	get_parent().add_child(enemy)
 	enemy.died.connect(_on_enemy_died)
-	enemy.reached_center.connect(_on_enemy_died.bind(Vector2.ZERO))
+	enemy.reached_center.connect(_on_enemy_died)
 	enemy.init(spawn_pos, target_pos, center_piece)
+
+	if wave_preview != null:
+		wave_preview.flash_warning(_warning_position(dir))
+
+
+func _spawn_mini_boss() -> void:
+	if mini_boss_scene == null or mini_boss_pool.is_empty():
+		return
+	var minutes := _elapsed_minutes()
+	var eligible: Array[MiniBossData] = []
+	for data in mini_boss_pool:
+		if minutes >= data.min_minute and minutes <= data.max_minute:
+			eligible.append(data)
+	if eligible.is_empty():
+		return
+
+	var data: MiniBossData = eligible[randi() % eligible.size()]
+	var dir := randi() % _active_direction_count()
+	var spawn_pos := _spawn_position(dir, 0.0)
+	var target_pos := center_piece.global_position if center_piece != null else hex_grid.global_position
+
+	var boss: MiniBoss = mini_boss_scene.instantiate()
+	boss.coin_scene = coin_scene
+	boss.projectile_scene = projectile_scene
+	get_parent().add_child(boss)
+	boss.died.connect(_on_enemy_died)
+	boss.reached_center.connect(_on_enemy_died)
+	boss.init(spawn_pos, target_pos, center_piece)
+	boss.setup_from_data(data, minutes)
+	emit_signal("mini_boss_spawned", boss)
+
+	if wave_preview != null:
+		wave_preview.flash_mini_boss_warning(_warning_position(dir))
 
 
 func _spawn_position(dir: int, jitter_deg: float) -> Vector2:
 	var jitter := randf_range(-jitter_deg, jitter_deg) if jitter_deg > 0.0 else 0.0
 	var angle := deg_to_rad(DIRECTION_ANGLES_DEG[dir] + jitter)
-	var radius := float(hex_grid.unlocked_radius + 1) * hex_grid.hex_size
+	var tile_radius := (float(hex_grid.max_grid_radius) + SPAWN_MARGIN_TILES) * hex_grid.hex_size
+	var spawn_radius := tile_radius
+	if camera != null:
+		spawn_radius = maxf(tile_radius, camera.max_visible_radius() * 1.15)
+	return hex_grid.global_position + Vector2(cos(angle), sin(angle)) * spawn_radius
+
+
+func _warning_position(dir: int) -> Vector2:
+	var angle := deg_to_rad(DIRECTION_ANGLES_DEG[dir])
+	var radius := (float(hex_grid.unlocked_radius) - 0.5) * hex_grid.hex_size
+	if camera != null:
+		radius = camera.current_visible_radius() * 0.85
 	return hex_grid.global_position + Vector2(cos(angle), sin(angle)) * radius
 
 
-func _on_enemy_died(_pos: Vector2) -> void:
-	enemies_remaining -= 1
-	if enemies_remaining <= 0 and _spawn_queue.is_empty():
-		emit_signal("wave_completed", current_wave)
+func _on_enemy_died(_pos: Vector2 = Vector2.ZERO) -> void:
+	kills += 1
+	emit_signal("enemy_killed", kills)

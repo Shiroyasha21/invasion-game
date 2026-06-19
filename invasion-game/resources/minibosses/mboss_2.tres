@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MiniBossData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/mini_boss_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "mboss_2"
+display_name = "Marksman"
+base_hp = 220.0
+base_damage = 15.0
+base_speed = 65.0
+hp_growth_rate = 0.18
+damage_growth_rate = 0.15
+attack_pattern = 0
+attack_range = 260.0
+attack_interval = 1.8
+splash_radius = 0.0
+visual_scale = 1.4
+min_minute = 4.0
+max_minute = 999.0
+coin_reward = 60

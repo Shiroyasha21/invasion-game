@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MiniBossData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/mini_boss_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "mboss_1"
+display_name = "Brute"
+base_hp = 300.0
+base_damage = 20.0
+base_speed = 50.0
+hp_growth_rate = 0.12
+damage_growth_rate = 0.08
+attack_pattern = 1
+attack_range = 120.0
+attack_interval = 2.5
+splash_radius = 70.0
+visual_scale = 1.6
+min_minute = 0.0
+max_minute = 999.0
+coin_reward = 40

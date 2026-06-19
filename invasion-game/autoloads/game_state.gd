@@ -1,10 +1,12 @@
 extends Node
 
-signal coins_changed(amount: int)
-signal wave_changed(wave: int)
+const STARTING_COINS := 150
 
-var coins: int = 0
-var current_wave: int = 0
+signal coins_changed(amount: int)
+signal run_time_changed(seconds: float)
+
+var coins: int = STARTING_COINS
+var run_time: float = 0.0
 var towers_placed: int = 0
 
 
@@ -21,14 +23,14 @@ func spend_coins(amount: int) -> bool:
 	return true
 
 
-func set_wave(wave: int) -> void:
-	current_wave = wave
-	emit_signal("wave_changed", wave)
+func set_run_time(seconds: float) -> void:
+	run_time = seconds
+	emit_signal("run_time_changed", seconds)
 
 
 func reset() -> void:
-	coins = 0
+	coins = STARTING_COINS
 	towers_placed = 0
-	current_wave = 0
+	run_time = 0.0
 	emit_signal("coins_changed", coins)
-	emit_signal("wave_changed", current_wave)
+	emit_signal("run_time_changed", run_time)

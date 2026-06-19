@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name EnemyBase
 
-@export var move_speed: float = 80.0
+@export var move_speed: float = 50.0
 @export var max_health: float = 30.0
 @export var coin_scene: PackedScene
 @export var damage_to_center: float = 10.0

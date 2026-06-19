@@ -16,7 +16,7 @@ theme_override_constants/margin_bottom = 20
 [node name="VBox" type="VBoxContainer" parent="MarginContainer" unique_id=1445427514]
 layout_mode = 2
 
-[node name="WaveLabel" type="Label" parent="MarginContainer/VBox" unique_id=1435092427]
+[node name="TimeLabel" type="Label" parent="MarginContainer/VBox" unique_id=1435092427]
 layout_mode = 2
 
 [node name="CoinLabel" type="Label" parent="MarginContainer/VBox" unique_id=1089277599]
@@ -36,3 +36,28 @@ offset_top = -31.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "🪣 Sell"
+
+[node name="TowerBar" type="HBoxContainer" parent="." unique_id=3940182771]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -70.0
+offset_right = 160.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ArrowButton" type="Button" parent="TowerBar" unique_id=3940182772]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 50)
+
+[node name="CannonButton" type="Button" parent="TowerBar" unique_id=3940182773]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 50)
+
+[node name="SniperButton" type="Button" parent="TowerBar" unique_id=3940182774]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 50)

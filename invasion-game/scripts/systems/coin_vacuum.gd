@@ -1,7 +1,7 @@
 extends Node2D
 class_name CoinVacuum
 
-const RADIUS := 100.0
+const RADIUS := 60.0
 
 var _active: bool = false
 var _finger_pos: Vector2 = Vector2.ZERO

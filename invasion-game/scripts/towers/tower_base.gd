@@ -8,12 +8,24 @@ signal destroyed(hex: Vector2i)
 @export var attack_speed: float = 1.0
 @export var max_hp: float = 50.0
 @export var cost: int = 10
+@export var splash_radius: float = 0.0
+@export var body_color: Color = Color(0.4, 0.5, 0.6)
 @export var projectile_scene: PackedScene
 
 var current_hp: float
 var occupied_hex: Vector2i = Vector2i.ZERO
 var _fire_timer: float = 1.0
 var _target: EnemyBase = null
+
+
+func setup(data: TowerData) -> void:
+	attack_range = data.attack_range
+	attack_damage = data.attack_damage
+	attack_speed = data.attack_speed
+	max_hp = data.max_hp
+	cost = data.cost
+	splash_radius = data.splash_radius
+	body_color = data.body_color
 
 
 func _ready() -> void:
@@ -61,7 +73,7 @@ func _fire() -> void:
 	var proj: Projectile = projectile_scene.instantiate()
 	get_tree().current_scene.add_child(proj)
 	proj.global_position = global_position
-	proj.init(_target, attack_damage)
+	proj.init(_target, attack_damage, splash_radius)
 
 
 func _draw() -> void:
@@ -71,8 +83,8 @@ func _draw() -> void:
 		var angle := deg_to_rad(60.0 * i - 30.0)
 		pts.append(Vector2(cos(angle), sin(angle)) * 28.0)
 
-	var body_color := Color(0.4, 0.5, 0.6).lerp(Color(0.8, 0.2, 0.1), 1.0 - hp_ratio)
-	draw_colored_polygon(pts, body_color)
+	var color := body_color.lerp(Color(0.8, 0.2, 0.1), 1.0 - hp_ratio)
+	draw_colored_polygon(pts, color)
 	draw_polyline(pts + PackedVector2Array([pts[0]]), Color(0.7, 0.8, 1.0), 2.0)
 	draw_line(Vector2.ZERO, Vector2(30, 0), Color(0.8, 0.9, 1.0), 4.0)
 
