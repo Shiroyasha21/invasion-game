@@ -1,6 +1,9 @@
 extends EnemyBase
 class_name MiniBoss
 
+const BULLDOZE_COOLDOWN := 0.4
+const BULLDOZE_DAMAGE_FRACTION := 0.3  # crashing through costs it less than a focused hit
+
 @export var projectile_scene: PackedScene
 
 var boss_data: MiniBossData
@@ -10,6 +13,8 @@ var attack_interval: float = 2.0
 var splash_radius: float = 80.0
 
 var _boss_attack_timer: float = 0.0
+var _bulldoze_timer: float = 0.0
+var _sieging: bool = false
 
 
 func _ready() -> void:
@@ -34,15 +39,57 @@ func setup_from_data(data: MiniBossData, elapsed_minutes: float) -> void:
 	_boss_attack_timer = attack_interval
 
 
+# Overrides EnemyBase entirely — bosses don't get stuck single-target
+# fighting a blocking tower, and don't die from touching the centerpiece.
 func _process(delta: float) -> void:
-	super._process(delta)
 	_boss_attack_timer -= delta
 	if _boss_attack_timer <= 0.0:
-		_try_boss_attack()
 		_boss_attack_timer = attack_interval
+		if _sieging:
+			_siege_center()
+		else:
+			_try_ranged_attack()
+
+	if _sieging:
+		velocity = Vector2.ZERO
+		return
+
+	var to_target := target_position - global_position
+	if to_target.length() < 12.0:
+		_sieging = true
+		return
+
+	velocity = to_target.normalized() * move_speed
+	move_and_slide()
+
+	_bulldoze_timer -= delta
+	for i in get_slide_collision_count():
+		var collider := get_slide_collision(i).get_collider()
+		if collider is TowerBase:
+			_bulldoze_damage(collider)
 
 
-func _try_boss_attack() -> void:
+# Crashes through towers in its path instead of stopping to trade hits.
+func _bulldoze_damage(collider: TowerBase) -> void:
+	if _bulldoze_timer > 0.0:
+		return
+	_bulldoze_timer = BULLDOZE_COOLDOWN
+	var dmg := attack_damage * BULLDOZE_DAMAGE_FRACTION
+	collider.take_damage(dmg)
+	if splash_radius > 0.0:
+		for node in get_tree().get_nodes_in_group("towers"):
+			if node != collider and node is TowerBase and node.global_position.distance_to(collider.global_position) <= splash_radius:
+				node.take_damage(dmg)
+
+
+func _siege_center() -> void:
+	if center_piece == null:
+		return
+	var multiplier := boss_data.center_damage_multiplier if boss_data != null else 3.0
+	center_piece.take_damage(attack_damage * multiplier)
+
+
+func _try_ranged_attack() -> void:
 	var nearest := _find_nearest_tower()
 	if nearest == null:
 		return

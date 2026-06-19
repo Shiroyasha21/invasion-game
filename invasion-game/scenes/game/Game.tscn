@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemies/MiniBoss.tscn" id="12_mboss"]
 [ext_resource type="Resource" path="res://resources/minibosses/mboss_1.tres" id="13_mboss1"]
 [ext_resource type="Resource" path="res://resources/minibosses/mboss_2.tres" id="14_mboss2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/LevelUpUI.tscn" id="15_levelup"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
@@ -42,3 +43,5 @@ script = ExtResource("9_qf6a8")
 [node name="HUD" parent="." unique_id=1012788880 instance=ExtResource("10_56wml")]
 
 [node name="WavePreview" parent="." unique_id=973536915 instance=ExtResource("11_aptqa")]
+
+[node name="LevelUpUI" parent="." unique_id=973536916 instance=ExtResource("15_levelup")]

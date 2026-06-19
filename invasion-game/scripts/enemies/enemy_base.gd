@@ -4,6 +4,8 @@ class_name EnemyBase
 @export var move_speed: float = 50.0
 @export var max_health: float = 30.0
 @export var coin_scene: PackedScene
+@export var coin_value: int = 1
+@export var essence_value: int = 1
 @export var damage_to_center: float = 10.0
 
 @export var attack_damage: float = 8.0
@@ -67,6 +69,7 @@ func take_damage(amount: float) -> void:
 
 
 func _die() -> void:
+	SFX.play_death()
 	emit_signal("died", global_position)
 	_drop_coin()
 	queue_free()
@@ -79,6 +82,8 @@ func _drop_coin() -> void:
 	get_tree().current_scene.add_child(coin)
 	coin.global_position = global_position
 	coin.add_to_group("coins")
+	coin.value = coin_value
+	coin.essence_value = essence_value
 	coin.set_origin(global_position)
 
 

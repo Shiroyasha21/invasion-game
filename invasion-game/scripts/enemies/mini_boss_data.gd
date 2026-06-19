@@ -15,6 +15,8 @@ enum AttackPattern { RANGED, SLAM }
 @export var attack_interval: float = 2.0
 @export var splash_radius: float = 80.0
 @export var visual_scale: float = 1.8
+@export var center_damage_multiplier: float = 3.0  # multiplied by attack_damage when it reaches the centerpiece
 @export var min_minute: float = 0.0
 @export var max_minute: float = 999.0
 @export var coin_reward: int = 50
+@export var essence_reward: int = 15

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RareAttachmentData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/towers/rare_attachment_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "overcharged"
+title = "Overcharged Core"
+description = "+100% damage on one tower. Lost if it's destroyed."
+damage_multiplier = 2.0
+range_multiplier = 1.0

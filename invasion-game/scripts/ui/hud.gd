@@ -9,6 +9,8 @@ const TOWER_DATA_PATHS := [
 @onready var coin_label: Label = $MarginContainer/VBox/CoinLabel
 @onready var time_label: Label = $MarginContainer/VBox/TimeLabel
 @onready var hp_label: Label = $MarginContainer/VBox/HPLabel
+@onready var level_label: Label = $MarginContainer/VBox/LevelLabel
+@onready var attach_prompt_label: Label = $AttachPromptLabel
 @onready var shovel_button: Button = $ShovelButton
 @onready var tower_bar: HBoxContainer = $TowerBar
 
@@ -21,8 +23,10 @@ var _tower_data: Array[TowerData] = []
 func _ready() -> void:
 	GameState.coins_changed.connect(_on_coins_changed)
 	GameState.run_time_changed.connect(_on_run_time_changed)
+	GameState.essence_changed.connect(_on_essence_changed)
 	_on_coins_changed(GameState.coins)
 	_on_run_time_changed(GameState.run_time)
+	_on_essence_changed(GameState.essence, GameState.essence_to_next)
 	shovel_button.pressed.connect(_on_shovel_pressed)
 	_setup_tower_bar()
 
@@ -58,6 +62,19 @@ func _on_run_time_changed(seconds: float) -> void:
 
 func _on_hp_changed(current: float, maximum: float) -> void:
 	hp_label.text = "HP: %d / %d" % [int(current), int(maximum)]
+
+
+func _on_essence_changed(amount: int, to_next: int) -> void:
+	level_label.text = "Lv %d  (%d/%d)" % [GameState.level, amount, to_next]
+
+
+func set_attach_prompt(title: String) -> void:
+	attach_prompt_label.text = "Tap a tower to attach: %s" % title
+	attach_prompt_label.visible = true
+
+
+func clear_attach_prompt() -> void:
+	attach_prompt_label.visible = false
 
 
 func _setup_tower_bar() -> void:

@@ -25,6 +25,21 @@ layout_mode = 2
 [node name="HPLabel" type="Label" parent="MarginContainer/VBox" unique_id=583650288]
 layout_mode = 2
 
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBox" unique_id=583650289]
+layout_mode = 2
+
+[node name="AttachPromptLabel" type="Label" parent="." unique_id=583650290]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 60.0
+offset_right = 200.0
+grow_horizontal = 2
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1.0, 0.85, 0.1, 1)
+
 [node name="ShovelButton" type="Button" parent="." unique_id=2074901135]
 anchors_preset = 3
 anchor_left = 1.0
