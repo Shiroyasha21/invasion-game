@@ -1,7 +1,6 @@
 extends Node2D
 
-const RUN_DURATION := 900.0  # 15 minutes
-const GRID_UNLOCK_INTERVAL_SECONDS := 90.0  # full board unlocked by 6:00
+const GRID_UNLOCK_INTERVAL_SECONDS := 130.0  # full board unlocked by ~8:40
 const CARDS_PER_LEVEL_UP := 3
 
 @onready var hex_grid: HexGridNode = $HexGrid
@@ -13,6 +12,8 @@ const CARDS_PER_LEVEL_UP := 3
 @onready var camera: CameraZoom = $Camera2D
 @onready var level_up_ui: LevelUpUI = $LevelUpUI
 @onready var skill_tree_ui: SkillTreeUI = $SkillTreeUI
+@onready var objectives_screen: ObjectivesScreen = $ObjectivesScreen
+@onready var end_screen: EndScreen = $EndScreen
 
 @export var enemy_scene: PackedScene
 @export var mini_boss_scene: PackedScene
@@ -51,7 +52,11 @@ func _ready() -> void:
 	wave_manager.wave_cleared.connect(_on_wave_cleared)
 	wave_manager.wave_incoming.connect(_on_wave_incoming)
 
-	await get_tree().create_timer(2.0).timeout
+	objectives_screen.start_pressed.connect(_on_objectives_start)
+	objectives_screen.open()
+
+
+func _on_objectives_start() -> void:
 	wave_manager.start_run()
 	SkillTree.start()
 
@@ -168,7 +173,7 @@ func _on_run_time_changed(seconds: float) -> void:
 	if seconds >= _next_grid_unlock_time:
 		hex_grid.unlock_more()
 		_next_grid_unlock_time += GRID_UNLOCK_INTERVAL_SECONDS
-	if seconds >= RUN_DURATION:
+	if seconds >= GameState.RUN_DURATION:
 		_on_run_survived()
 
 
@@ -208,13 +213,11 @@ func _on_run_survived() -> void:
 	_run_ended = true
 	wave_manager.stop_run()
 	SkillTree.stop()
-	get_tree().paused = true
-	print("RUN SURVIVED — coins collected: %d" % GameState.coins)
+	end_screen.show_result(true, GameState.run_time, wave_manager.kills, GameState.coins, GameState.level)
 
 
 func _on_game_over() -> void:
 	_run_ended = true
 	wave_manager.stop_run()
 	SkillTree.stop()
-	get_tree().paused = true
-	print("GAME OVER — coins collected: %d" % GameState.coins)
+	end_screen.show_result(false, GameState.run_time, wave_manager.kills, GameState.coins, GameState.level)

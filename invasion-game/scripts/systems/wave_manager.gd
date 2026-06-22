@@ -12,13 +12,20 @@ const DIRECTION_ANGLES_DEG := [-90.0, -30.0, 30.0, 90.0, 150.0, -150.0]
 const ARC_JITTER_DEG := 25.0
 const SPAWN_MARGIN_TILES := 3.0  # extra tiles beyond the rendered grid so enemies appear off-screen
 
-# Each wave ramps from a calm trickle up to a full-surround climax, then goes
-# quiet for WAVE_REST_DURATION before the next wave starts slow again. This
-# gives the player a breather and a clear "wave cleared, next wave incoming"
-# rhythm instead of nonstop escalating pressure.
-const WAVE_ACTIVE_DURATION := 50.0
-const WAVE_REST_DURATION := 12.0
-const WAVE_CYCLE := WAVE_ACTIVE_DURATION + WAVE_REST_DURATION
+# Each wave ramps from a calm trickle up to a full-surround climax. Most wave
+# transitions roll straight into the next wave (just resetting the ramp back
+# to calm — a brief "slow down" without a hard stop). A real breather (no
+# spawns at all) only happens when a new enemy type is about to be introduced,
+# or periodically every few waves otherwise. Breathers shrink as the run
+# clock nears the end, so the back half of the run stays relentless.
+const WAVE_ACTIVE_DURATION := 55.0
+const UNLOCK_WAVES := [1, 3, 5, 8]  # must match _apply_enemy_profile's thresholds
+const PERIODIC_REST_INTERVAL := 3
+const UNLOCK_REST_BASE := 14.0
+const UNLOCK_REST_MIN := 4.0
+const PERIODIC_REST_BASE := 7.0
+const PERIODIC_REST_MIN := 1.5
+
 const BASE_SPAWN_INTERVAL := 2.2
 const MIN_SPAWN_INTERVAL := 0.45
 
@@ -44,11 +51,12 @@ var wave_preview: WavePreview
 var running: bool = false
 var elapsed_time: float = 0.0
 var kills: int = 0
+var current_wave_index: int = 0
 
 var _spawn_timer: float = 0.0
 var _mini_boss_timer: float = MINI_BOSS_INTERVAL
-var _last_wave_index: int = -1
-var _was_resting: bool = false
+var _resting: bool = false
+var _phase_time_left: float = WAVE_ACTIVE_DURATION
 
 
 func init(grid: HexGridNode) -> void:
@@ -58,10 +66,11 @@ func init(grid: HexGridNode) -> void:
 func start_run() -> void:
 	elapsed_time = 0.0
 	kills = 0
+	current_wave_index = 0
+	_resting = false
+	_phase_time_left = WAVE_ACTIVE_DURATION
 	_spawn_timer = BASE_SPAWN_INTERVAL
 	_mini_boss_timer = FIRST_MINI_BOSS_DELAY
-	_last_wave_index = -1
-	_was_resting = false
 	running = true
 
 
@@ -77,51 +86,64 @@ func _process(delta: float) -> void:
 	GameState.set_run_time(elapsed_time)
 	emit_signal("run_time_updated", elapsed_time)
 
-	_check_wave_transition()
+	_phase_time_left -= delta
+	if _resting:
+		if _phase_time_left <= 0.0:
+			_begin_wave(current_wave_index + 1)
+		return
 
-	if not _in_rest_period():
-		_spawn_timer -= delta
-		if _spawn_timer <= 0.0:
-			_spawn_pulse()
-			_spawn_timer = _current_spawn_interval()
+	if _phase_time_left <= 0.0:
+		_advance_wave()
 
-		_mini_boss_timer -= delta
-		if _mini_boss_timer <= 0.0:
-			_spawn_mini_boss()
-			_mini_boss_timer = MINI_BOSS_INTERVAL
+	_spawn_timer -= delta
+	if _spawn_timer <= 0.0:
+		_spawn_pulse()
+		_spawn_timer = _current_spawn_interval()
+
+	_mini_boss_timer -= delta
+	if _mini_boss_timer <= 0.0:
+		_spawn_mini_boss()
+		_mini_boss_timer = MINI_BOSS_INTERVAL
 
 
 func _elapsed_minutes() -> float:
 	return elapsed_time / 60.0
 
 
-func _wave_index() -> int:
-	return int(elapsed_time / WAVE_CYCLE)
-
-
-func _elapsed_in_wave() -> float:
-	return fmod(elapsed_time, WAVE_CYCLE)
-
-
-func _in_rest_period() -> bool:
-	return _elapsed_in_wave() >= WAVE_ACTIVE_DURATION
+func _run_progress() -> float:
+	return clampf(elapsed_time / GameState.RUN_DURATION, 0.0, 1.0)
 
 
 func _wave_progress() -> float:
-	return clampf(_elapsed_in_wave() / WAVE_ACTIVE_DURATION, 0.0, 1.0)
+	return clampf(1.0 - _phase_time_left / WAVE_ACTIVE_DURATION, 0.0, 1.0)
 
 
-func _check_wave_transition() -> void:
-	var wave := _wave_index()
-	var resting := _in_rest_period()
+func _advance_wave() -> void:
+	var next_wave := current_wave_index + 1
+	if _should_rest_before(next_wave):
+		_resting = true
+		_phase_time_left = _rest_duration_for(next_wave)
+		emit_signal("wave_cleared", current_wave_index)
+	else:
+		_begin_wave(next_wave)
 
-	if wave != _last_wave_index:
-		_last_wave_index = wave
-		emit_signal("wave_incoming", wave)
-	elif resting and not _was_resting:
-		emit_signal("wave_cleared", wave)
 
-	_was_resting = resting
+func _begin_wave(wave_index: int) -> void:
+	current_wave_index = wave_index
+	_resting = false
+	_phase_time_left = WAVE_ACTIVE_DURATION
+	emit_signal("wave_incoming", wave_index)
+
+
+func _should_rest_before(wave_index: int) -> bool:
+	return wave_index in UNLOCK_WAVES or wave_index % PERIODIC_REST_INTERVAL == 0
+
+
+func _rest_duration_for(wave_index: int) -> float:
+	var t := _run_progress()
+	if wave_index in UNLOCK_WAVES:
+		return lerpf(UNLOCK_REST_BASE, UNLOCK_REST_MIN, t)
+	return lerpf(PERIODIC_REST_BASE, PERIODIC_REST_MIN, t)
 
 
 func _current_spawn_interval() -> float:
@@ -145,12 +167,12 @@ func _max_sync_for_wave(wave_index: int) -> int:
 
 
 func _active_direction_count() -> int:
-	var max_dirs := _max_directions_for_wave(_wave_index())
+	var max_dirs := _max_directions_for_wave(current_wave_index)
 	return clampi(roundi(lerpf(1.0, float(max_dirs), _wave_progress())), 1, max_dirs)
 
 
 func _sync_size() -> int:
-	var max_sync := mini(_max_sync_for_wave(_wave_index()), _active_direction_count())
+	var max_sync := mini(_max_sync_for_wave(current_wave_index), _active_direction_count())
 	return clampi(roundi(lerpf(1.0, float(max_sync), _wave_progress())), 1, max_sync)
 
 
@@ -191,18 +213,19 @@ func _spawn_enemy(dir: int) -> void:
 		wave_preview.flash_warning(_warning_position(dir))
 
 
-# Behavior variants unlock one wave at a time — each new type's first
-# appearances land in that wave's slow opening ramp instead of all at once.
+# Behavior variants unlock one wave at a time (must match UNLOCK_WAVES above)
+# — each new type's first appearances land in that wave's slow opening ramp,
+# right after the breather that introduces it.
 func _apply_enemy_profile(enemy: EnemyBase) -> void:
-	var wave := _wave_index()
+	var wave := current_wave_index
 	var choices: Array[String] = ["normal"]
 	if wave >= 1:
 		choices.append("fast")
-	if wave >= 2:
-		choices.append("tanky")
 	if wave >= 3:
-		choices.append("flanker")
+		choices.append("tanky")
 	if wave >= 5:
+		choices.append("flanker")
+	if wave >= 8:
 		choices.append("flying")
 
 	match choices[randi() % choices.size()]:

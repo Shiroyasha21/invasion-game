@@ -15,6 +15,7 @@ const TOWER_DATA_PATHS := [
 @onready var shovel_button: Button = $ShovelButton
 @onready var skill_tree_button: Button = $SkillTreeButton
 @onready var shield_button: Button = $ShieldButton
+@onready var shield_label: Label = $ShieldButton/Row/Label
 @onready var tower_bar: VBoxContainer = $TowerBar
 
 var center_piece: CenterPiece
@@ -78,13 +79,13 @@ func _on_shield_cooldown_changed(remaining: float, _ready: bool) -> void:
 
 func _update_shield_button(cooldown_remaining: float = 0.0) -> void:
 	if SkillTree.shield_active:
-		shield_button.text = "🛡 Active"
+		shield_label.text = "Active"
 		shield_button.disabled = true
 	elif not SkillTree.shield_ready:
-		shield_button.text = "🛡 %ds" % ceili(cooldown_remaining)
+		shield_label.text = "%ds" % ceili(cooldown_remaining)
 		shield_button.disabled = true
 	else:
-		shield_button.text = "🛡 Shield"
+		shield_label.text = "Shield"
 		shield_button.disabled = false
 
 
@@ -100,8 +101,8 @@ func _on_coins_changed(amount: int) -> void:
 
 
 func _on_run_time_changed(seconds: float) -> void:
-	var total := int(seconds)
-	time_label.text = "Time: %02d:%02d" % [total / 60, total % 60]
+	var remaining := maxi(int(GameState.RUN_DURATION - seconds), 0)
+	time_label.text = "%02d:%02d" % [remaining / 60, remaining % 60]
 
 
 func _on_hp_changed(current: float, maximum: float) -> void:
@@ -130,7 +131,20 @@ func _setup_tower_bar() -> void:
 		if button == null or i >= _tower_data.size():
 			continue
 		var data: TowerData = _tower_data[i]
-		button.text = "%s\n%d" % [data.display_name, data.cost]
+
+		var icon := button.get_node("Row/Icon") as TowerIcon
+		if icon != null:
+			icon.animal_type = data.animal_type
+			icon.body_color = data.body_color
+			icon.queue_redraw()
+
+		var name_label := button.get_node("Row/Labels/NameLabel") as Label
+		if name_label != null:
+			name_label.text = data.display_name
+		var cost_label := button.get_node("Row/Labels/CostLabel") as Label
+		if cost_label != null:
+			cost_label.text = str(data.cost)
+
 		button.pressed.connect(_on_tower_button_pressed.bind(button, data))
 		_tower_buttons.append(button)
 

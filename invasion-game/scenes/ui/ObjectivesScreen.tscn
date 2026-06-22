@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/objectives_screen.gd" id="1"]
+
+[node name="ObjectivesScreen" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="Dim" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.75)
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -260.0
+offset_right = 280.0
+offset_bottom = 260.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "Defend the Tree"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="BodyLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Survive 18 minutes as insects swarm in from every side.
+
+• Tap a tile to place the selected tower
+• Tap the Shovel, then a tower, to sell it
+• Drag your finger to vacuum up coins and essence
+• Tap the tree (or the Skills button) for its skill tree
+• Kill enemies to level up and pick an upgrade card
+• Watch for warning markers — mini-bosses hit hard
+
+The tree's HP is your life. If it falls, the run ends."
+
+[node name="StartButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+text = "Start Defending"

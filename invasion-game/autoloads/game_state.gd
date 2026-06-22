@@ -3,6 +3,7 @@ extends Node
 const STARTING_COINS := 900
 const ESSENCE_BASE_THRESHOLD := 8
 const ESSENCE_GROWTH := 1.3
+const RUN_DURATION := 1080.0  # 18 minutes
 
 signal coins_changed(amount: int)
 signal run_time_changed(seconds: float)

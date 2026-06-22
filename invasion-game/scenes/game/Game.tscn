@@ -20,6 +20,8 @@
 [ext_resource type="Resource" path="res://resources/minibosses/mboss_4.tres" id="17_mboss4"]
 [ext_resource type="Resource" path="res://resources/minibosses/mboss_5.tres" id="18_mboss5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SkillTreeUI.tscn" id="19_skilltree"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ObjectivesScreen.tscn" id="20_objectives"]
+[ext_resource type="PackedScene" path="res://scenes/ui/EndScreen.tscn" id="21_endscreen"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
@@ -51,3 +53,7 @@ script = ExtResource("9_qf6a8")
 [node name="LevelUpUI" parent="." unique_id=973536916 instance=ExtResource("15_levelup")]
 
 [node name="SkillTreeUI" parent="." unique_id=973536917 instance=ExtResource("19_skilltree")]
+
+[node name="ObjectivesScreen" parent="." unique_id=973536918 instance=ExtResource("20_objectives")]
+
+[node name="EndScreen" parent="." unique_id=973536919 instance=ExtResource("21_endscreen")]

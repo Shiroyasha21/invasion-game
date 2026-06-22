@@ -1,9 +1,11 @@
 extends CanvasLayer
 class_name SkillTreeUI
 
-@onready var shield_label: Label = $Panel/VBox/ShieldLabel
+@onready var shield_label: Label = $Panel/VBox/ShieldRow/ShieldLabel
 @onready var vines_button: Button = $Panel/VBox/VinesButton
+@onready var vines_label: Label = $Panel/VBox/VinesButton/Row/Label
 @onready var weaken_button: Button = $Panel/VBox/WeakenButton
+@onready var weaken_label: Label = $Panel/VBox/WeakenButton/Row/Label
 @onready var close_button: Button = $Panel/VBox/CloseButton
 
 
@@ -50,24 +52,24 @@ func _refresh() -> void:
 	_update_shield_label(SkillTree.shield_active)
 
 	if SkillTree.vines_unlocked:
-		vines_button.text = "Vines — Unlocked"
+		vines_label.text = "Vines — Unlocked\nPeriodically slows nearby enemies"
 		vines_button.disabled = true
 	else:
-		vines_button.text = "Unlock Vines (%d coins)\nPeriodically slows nearby enemies" % SkillTree.VINES_COST
+		vines_label.text = "Unlock Vines (%d coins)\nPeriodically slows nearby enemies" % SkillTree.VINES_COST
 		vines_button.disabled = false
 
 	if SkillTree.weaken_unlocked:
-		weaken_button.text = "Weaken Boss — Unlocked"
+		weaken_label.text = "Weaken Boss — Unlocked\nFuture mini-bosses are weaker"
 		weaken_button.disabled = true
 	else:
-		weaken_button.text = "Unlock Weaken Boss (%d coins)\nFuture mini-bosses are weaker" % SkillTree.WEAKEN_COST
+		weaken_label.text = "Unlock Weaken Boss (%d coins)\nFuture mini-bosses are weaker" % SkillTree.WEAKEN_COST
 		weaken_button.disabled = false
 
 
 func _update_shield_label(active: bool) -> void:
 	if active:
-		shield_label.text = "Tower Shield: ACTIVE"
+		shield_label.text = "Shield: ACTIVE"
 	elif SkillTree.shield_ready:
-		shield_label.text = "Tower Shield — ready (use the 🛡 button to activate)"
+		shield_label.text = "Shield — ready (use the Shield button on the HUD)"
 	else:
-		shield_label.text = "Tower Shield — on cooldown"
+		shield_label.text = "Shield — on cooldown"
