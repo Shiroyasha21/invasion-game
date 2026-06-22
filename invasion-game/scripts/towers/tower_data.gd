@@ -2,8 +2,10 @@ class_name TowerData
 extends Resource
 
 enum TargetMode { NEAREST, FARTHEST }
+enum AnimalType { FROG, BEAR, MONKEY }
 
 @export var id: String = "arrow"
+@export var animal_type: AnimalType = AnimalType.FROG
 @export var display_name: String = "Arrow"
 @export var cost: int = 10
 @export var attack_range: float = 200.0

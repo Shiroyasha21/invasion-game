@@ -44,5 +44,13 @@ func _draw() -> void:
 	if essence_value > 0:
 		outer = outer.lerp(Color(0.3, 1.0, 0.5), 0.5)
 		inner = inner.lerp(Color(0.6, 1.0, 0.7), 0.5)
+
+	if not _sucked:
+		# Keep the shadow pinned to the ground line while the coin bobs above it.
+		var ground_y := _origin.y - global_position.y
+		draw_set_transform(Vector2(2.0, ground_y), 0.0, Vector2(1.0, 0.4))
+		draw_circle(Vector2.ZERO, 9.0 * scale_factor, Color(0.0, 0.0, 0.0, 0.25))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
 	draw_circle(Vector2.ZERO, 10.0 * scale_factor, outer)
 	draw_circle(Vector2.ZERO, 7.0 * scale_factor, inner)

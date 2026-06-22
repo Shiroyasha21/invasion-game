@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="MiniBossData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/mini_boss_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "mboss_3"
+display_name = "Stag Beetle"
+base_hp = 350.0
+base_damage = 18.0
+base_speed = 55.0
+hp_growth_rate = 0.14
+damage_growth_rate = 0.10
+attack_pattern = 1
+movement_behavior = 1
+sweep_angle_deg = 110.0
+attack_range = 110.0
+attack_interval = 2.2
+splash_radius = 65.0
+visual_scale = 1.7
+center_damage_multiplier = 3.0
+min_minute = 5.0
+max_minute = 999.0
+coin_reward = 600
+essence_reward = 35

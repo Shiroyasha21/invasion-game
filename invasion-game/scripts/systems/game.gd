@@ -1,7 +1,7 @@
 extends Node2D
 
-const RUN_DURATION := 600.0  # 10 minutes
-const GRID_UNLOCK_INTERVAL_SECONDS := 60.0
+const RUN_DURATION := 900.0  # 15 minutes
+const GRID_UNLOCK_INTERVAL_SECONDS := 90.0  # full board unlocked by 6:00
 const CARDS_PER_LEVEL_UP := 3
 
 @onready var hex_grid: HexGridNode = $HexGrid
@@ -12,6 +12,7 @@ const CARDS_PER_LEVEL_UP := 3
 @onready var wave_preview: WavePreview = $WavePreview
 @onready var camera: CameraZoom = $Camera2D
 @onready var level_up_ui: LevelUpUI = $LevelUpUI
+@onready var skill_tree_ui: SkillTreeUI = $SkillTreeUI
 
 @export var enemy_scene: PackedScene
 @export var mini_boss_scene: PackedScene
@@ -46,9 +47,13 @@ func _ready() -> void:
 	GameState.run_time_changed.connect(_on_run_time_changed)
 	GameState.level_up.connect(_on_player_level_up)
 	level_up_ui.card_chosen.connect(_on_card_chosen)
+	SkillTree.vines_triggered.connect(_on_vines_triggered)
+	wave_manager.wave_cleared.connect(_on_wave_cleared)
+	wave_manager.wave_incoming.connect(_on_wave_incoming)
 
 	await get_tree().create_timer(2.0).timeout
 	wave_manager.start_run()
+	SkillTree.start()
 
 
 func toggle_shovel() -> void:
@@ -58,6 +63,27 @@ func toggle_shovel() -> void:
 
 func select_tower_type(data: TowerData) -> void:
 	selected_tower_data = data
+
+
+func open_skill_tree() -> void:
+	skill_tree_ui.open()
+
+
+func activate_shield() -> void:
+	if SkillTree.try_activate_shield():
+		SFX.play_shield_activate()
+
+
+func _on_wave_cleared(_wave_index: int) -> void:
+	SFX.play_wave_cleared()
+	hud.show_wave_banner("Wave Cleared!")
+
+
+func _on_wave_incoming(wave_index: int) -> void:
+	if wave_index == 0:
+		return
+	SFX.play_wave_incoming()
+	hud.show_wave_banner("Wave %d Incoming" % (wave_index + 1))
 
 
 func _input(event: InputEvent) -> void:
@@ -75,8 +101,17 @@ func _handle_tap(screen_pos: Vector2) -> void:
 		_try_attach_rare(hex)
 	elif _shovel_mode:
 		_try_sell_tower(hex)
+	elif hex == Vector2i.ZERO:
+		skill_tree_ui.open()
 	else:
 		_try_place_tower(hex)
+
+
+func _on_vines_triggered(radius: float, slow_mult: float, duration: float) -> void:
+	var center := center_piece.global_position
+	for node in get_tree().get_nodes_in_group("enemies"):
+		if node is EnemyBase and node.global_position.distance_to(center) <= radius:
+			node.apply_slow(slow_mult, duration)
 
 
 func _try_place_tower(hex: Vector2i) -> void:
@@ -85,8 +120,6 @@ func _try_place_tower(hex: Vector2i) -> void:
 	if not hex_grid.is_valid_tile(hex):
 		return
 	if hex_grid.is_occupied(hex):
-		return
-	if hex == Vector2i.ZERO:
 		return
 	if not GameState.spend_coins(selected_tower_data.cost):
 		return
@@ -174,6 +207,7 @@ func _apply_stat_card(card: UpgradeCard) -> void:
 func _on_run_survived() -> void:
 	_run_ended = true
 	wave_manager.stop_run()
+	SkillTree.stop()
 	get_tree().paused = true
 	print("RUN SURVIVED — coins collected: %d" % GameState.coins)
 
@@ -181,5 +215,6 @@ func _on_run_survived() -> void:
 func _on_game_over() -> void:
 	_run_ended = true
 	wave_manager.stop_run()
+	SkillTree.stop()
 	get_tree().paused = true
 	print("GAME OVER — coins collected: %d" % GameState.coins)

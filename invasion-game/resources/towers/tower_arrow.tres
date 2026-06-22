@@ -19,3 +19,4 @@ projectile_color = Color(0.4, 0.95, 0.5, 1)
 projectile_radius = 5.0
 projectile_speed = 480.0
 projectile_is_streak = false
+animal_type = 0

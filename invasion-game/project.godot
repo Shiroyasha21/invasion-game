@@ -20,12 +20,17 @@ config/icon="res://icon.svg"
 GameState="*uid://d15vvuou7daok"
 BuildState="*res://autoloads/build_state.gd"
 SFX="*res://autoloads/sfx.gd"
+SkillTree="*res://autoloads/skill_tree.gd"
 
 [display]
 
 window/size/viewport_width=1080
 window/size/viewport_height=1920
 window/stretch/mode="canvas_items"
+
+[gui]
+
+theme/custom="res://resources/theme/game_theme.tres"
 
 [physics]
 

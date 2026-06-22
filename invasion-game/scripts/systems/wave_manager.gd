@@ -4,18 +4,31 @@ class_name WaveManager
 signal run_time_updated(elapsed: float)
 signal mini_boss_spawned(boss: MiniBoss)
 signal enemy_killed(total_kills: int)
+signal wave_cleared(wave_index: int)
+signal wave_incoming(wave_index: int)
 
 # Direction angles in degrees: N, NE, SE, S, SW, NW (60 degrees apart)
 const DIRECTION_ANGLES_DEG := [-90.0, -30.0, 30.0, 90.0, 150.0, -150.0]
 const ARC_JITTER_DEG := 25.0
 const SPAWN_MARGIN_TILES := 3.0  # extra tiles beyond the rendered grid so enemies appear off-screen
 
+# Each wave ramps from a calm trickle up to a full-surround climax, then goes
+# quiet for WAVE_REST_DURATION before the next wave starts slow again. This
+# gives the player a breather and a clear "wave cleared, next wave incoming"
+# rhythm instead of nonstop escalating pressure.
+const WAVE_ACTIVE_DURATION := 50.0
+const WAVE_REST_DURATION := 12.0
+const WAVE_CYCLE := WAVE_ACTIVE_DURATION + WAVE_REST_DURATION
 const BASE_SPAWN_INTERVAL := 2.2
-const MIN_SPAWN_INTERVAL := 0.4
-const DIFFICULTY_GROWTH_PER_MIN := 0.12
+const MIN_SPAWN_INTERVAL := 0.45
+
+const DIFFICULTY_GROWTH_PER_MIN := 0.10
 const MINI_BOSS_INTERVAL := 90.0
-const FIRST_MINI_BOSS_DELAY := 180.0  # give the player time to build up before the first boss
+const FIRST_MINI_BOSS_DELAY := 270.0  # 4:30 — give the player more time to build up before the first boss
 const MINI_BOSS_TELEGRAPH_SECONDS := 3.0  # warning shows this long before the boss actually appears
+const WEALTHY_CHANCE := 0.12  # fraction of regular enemies that drop a big bonus
+const WEALTHY_COIN_MULT := 6
+const WEALTHY_ESSENCE_MULT := 2
 
 @export var enemy_scene: PackedScene
 @export var mini_boss_scene: PackedScene
@@ -34,6 +47,8 @@ var kills: int = 0
 
 var _spawn_timer: float = 0.0
 var _mini_boss_timer: float = MINI_BOSS_INTERVAL
+var _last_wave_index: int = -1
+var _was_resting: bool = false
 
 
 func init(grid: HexGridNode) -> void:
@@ -45,6 +60,8 @@ func start_run() -> void:
 	kills = 0
 	_spawn_timer = BASE_SPAWN_INTERVAL
 	_mini_boss_timer = FIRST_MINI_BOSS_DELAY
+	_last_wave_index = -1
+	_was_resting = false
 	running = true
 
 
@@ -60,24 +77,55 @@ func _process(delta: float) -> void:
 	GameState.set_run_time(elapsed_time)
 	emit_signal("run_time_updated", elapsed_time)
 
-	_spawn_timer -= delta
-	if _spawn_timer <= 0.0:
-		_spawn_pulse()
-		_spawn_timer = _current_spawn_interval()
+	_check_wave_transition()
 
-	_mini_boss_timer -= delta
-	if _mini_boss_timer <= 0.0:
-		_spawn_mini_boss()
-		_mini_boss_timer = MINI_BOSS_INTERVAL
+	if not _in_rest_period():
+		_spawn_timer -= delta
+		if _spawn_timer <= 0.0:
+			_spawn_pulse()
+			_spawn_timer = _current_spawn_interval()
+
+		_mini_boss_timer -= delta
+		if _mini_boss_timer <= 0.0:
+			_spawn_mini_boss()
+			_mini_boss_timer = MINI_BOSS_INTERVAL
 
 
 func _elapsed_minutes() -> float:
 	return elapsed_time / 60.0
 
 
+func _wave_index() -> int:
+	return int(elapsed_time / WAVE_CYCLE)
+
+
+func _elapsed_in_wave() -> float:
+	return fmod(elapsed_time, WAVE_CYCLE)
+
+
+func _in_rest_period() -> bool:
+	return _elapsed_in_wave() >= WAVE_ACTIVE_DURATION
+
+
+func _wave_progress() -> float:
+	return clampf(_elapsed_in_wave() / WAVE_ACTIVE_DURATION, 0.0, 1.0)
+
+
+func _check_wave_transition() -> void:
+	var wave := _wave_index()
+	var resting := _in_rest_period()
+
+	if wave != _last_wave_index:
+		_last_wave_index = wave
+		emit_signal("wave_incoming", wave)
+	elif resting and not _was_resting:
+		emit_signal("wave_cleared", wave)
+
+	_was_resting = resting
+
+
 func _current_spawn_interval() -> float:
-	var t := clampf(_elapsed_minutes() / 8.0, 0.0, 1.0)
-	return lerpf(BASE_SPAWN_INTERVAL, MIN_SPAWN_INTERVAL, t)
+	return lerpf(BASE_SPAWN_INTERVAL, MIN_SPAWN_INTERVAL, _wave_progress())
 
 
 func _difficulty_multiplier() -> float:
@@ -85,30 +133,25 @@ func _difficulty_multiplier() -> float:
 
 
 func _coin_value_for_time() -> int:
-	return mini(1 + int(_elapsed_minutes() / 2.0), 6)
+	return mini(2 + int(_elapsed_minutes() / 1.8), 12)
+
+
+func _max_directions_for_wave(wave_index: int) -> int:
+	return clampi(1 + wave_index, 1, 6)
+
+
+func _max_sync_for_wave(wave_index: int) -> int:
+	return clampi(1 + int(wave_index / 2.0), 1, 6)
 
 
 func _active_direction_count() -> int:
-	var minutes := _elapsed_minutes()
-	if minutes < 1.0:
-		return 1
-	elif minutes < 3.0:
-		return 2
-	elif minutes < 5.0:
-		return 4
-	else:
-		return 6
+	var max_dirs := _max_directions_for_wave(_wave_index())
+	return clampi(roundi(lerpf(1.0, float(max_dirs), _wave_progress())), 1, max_dirs)
 
 
 func _sync_size() -> int:
-	var minutes := _elapsed_minutes()
-	var active := _active_direction_count()
-	if minutes < 3.0:
-		return 1
-	elif minutes < 5.0:
-		return mini(2, active)
-	else:
-		return active
+	var max_sync := mini(_max_sync_for_wave(_wave_index()), _active_direction_count())
+	return clampi(roundi(lerpf(1.0, float(max_sync), _wave_progress())), 1, max_sync)
 
 
 func _spawn_pulse() -> void:
@@ -131,6 +174,14 @@ func _spawn_enemy(dir: int) -> void:
 	enemy.coin_value = _coin_value_for_time()
 	enemy.max_health *= difficulty
 	enemy.attack_damage *= difficulty
+
+	if randf() < WEALTHY_CHANCE:
+		enemy.is_wealthy = true
+		enemy.coin_value *= WEALTHY_COIN_MULT
+		enemy.essence_value *= WEALTHY_ESSENCE_MULT
+
+	_apply_enemy_profile(enemy)
+
 	get_parent().add_child(enemy)
 	enemy.died.connect(_on_enemy_died)
 	enemy.reached_center.connect(_on_enemy_died)
@@ -138,6 +189,33 @@ func _spawn_enemy(dir: int) -> void:
 
 	if wave_preview != null:
 		wave_preview.flash_warning(_warning_position(dir))
+
+
+# Behavior variants unlock one wave at a time — each new type's first
+# appearances land in that wave's slow opening ramp instead of all at once.
+func _apply_enemy_profile(enemy: EnemyBase) -> void:
+	var wave := _wave_index()
+	var choices: Array[String] = ["normal"]
+	if wave >= 1:
+		choices.append("fast")
+	if wave >= 2:
+		choices.append("tanky")
+	if wave >= 3:
+		choices.append("flanker")
+	if wave >= 5:
+		choices.append("flying")
+
+	match choices[randi() % choices.size()]:
+		"fast":
+			enemy.is_fast = true
+		"tanky":
+			enemy.is_tanky = true
+			enemy.max_health *= 2.5
+			enemy.move_speed *= 0.7
+		"flanker":
+			enemy.is_flanker = true
+		"flying":
+			enemy.is_flying = true
 
 
 func _spawn_mini_boss() -> void:
@@ -173,11 +251,36 @@ func _spawn_mini_boss() -> void:
 	get_parent().add_child(boss)
 	boss.died.connect(_on_enemy_died)
 	boss.reached_center.connect(_on_enemy_died)
+	boss.tower_displaced.connect(_on_tower_displaced)
 	boss.init(spawn_pos, target_pos, center_piece)
 	boss.setup_from_data(data, minutes)
+
+	var weaken := SkillTree.boss_weaken_multiplier()
+	boss.attack_damage *= weaken
+	boss.max_health *= weaken
+	boss.current_health = boss.max_health
+
 	boss.coin_value = data.coin_reward
 	boss.essence_value = data.essence_reward
 	emit_signal("mini_boss_spawned", boss)
+
+
+# Knocks a tower to a random open tile instead of damaging it.
+func _on_tower_displaced(tower: TowerBase) -> void:
+	var candidates: Array[Vector2i] = []
+	for hex in hex_grid.tiles.keys():
+		if hex == Vector2i.ZERO:
+			continue
+		if hex_grid.is_valid_tile(hex) and not hex_grid.is_occupied(hex):
+			candidates.append(hex)
+	if candidates.is_empty():
+		return
+
+	var new_hex: Vector2i = candidates[randi() % candidates.size()]
+	hex_grid.set_occupied(tower.occupied_hex, false)
+	hex_grid.set_occupied(new_hex, true)
+	tower.occupied_hex = new_hex
+	tower.global_position = hex_grid.hex_grid_to_pixel(new_hex)
 
 
 func _spawn_position(dir: int, jitter_deg: float) -> Vector2:

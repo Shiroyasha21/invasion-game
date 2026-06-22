@@ -2,8 +2,11 @@ class_name MiniBossData
 extends Resource
 
 enum AttackPattern { RANGED, SLAM }
+enum MovementBehavior { BULLDOZE, SWEEPER, DISPLACER, FLYER }
 
 @export var id: String = "mboss_1"
+@export var movement_behavior: MovementBehavior = MovementBehavior.BULLDOZE
+@export var sweep_angle_deg: float = 100.0  # how far around it arcs before committing to center (SWEEPER only)
 @export var display_name: String = "Brute"
 @export var base_hp: float = 300.0
 @export var base_damage: float = 20.0

@@ -7,10 +7,14 @@ signal unlocked_radius_changed(new_radius: int)
 @export var max_grid_radius: int = 7  # full board size, generated once
 @export var initial_unlocked_radius: int = 3  # how much is playable/visible at start
 
+const GRASS_BASE := Color(0.16, 0.36, 0.14)
+const FOG_COLOR := Color(0.03, 0.06, 0.03, 0.92)
+
 var tiles: Dictionary = {}  # Vector2i -> bool (occupied)
 var unlocked_radius: int
 var highlighted_hexes: Array[Vector2i] = []
 var _highlight_pulse: float = 0.0
+var _grass_speckles: Dictionary = {}  # Vector2i -> Array[Dictionary] {pos, radius, shade}
 
 
 func _ready() -> void:
@@ -46,9 +50,26 @@ func clear_highlights() -> void:
 
 func _generate_tiles() -> void:
 	tiles.clear()
+	_grass_speckles.clear()
 	for hex in HexGrid.filled_circle(Vector2i.ZERO, max_grid_radius):
 		tiles[hex] = false
+		_grass_speckles[hex] = _make_speckles(hex)
 	queue_redraw()
+
+
+# Pre-baked grass-tuft texture per tile so the ground reads as an organic
+# field instead of flat-filled hexagons — generated once, not every frame.
+func _make_speckles(hex: Vector2i) -> Array:
+	var speckles := []
+	var center := HexGrid.hex_to_pixel(hex, hex_size)
+	for _i in 5:
+		var offset := Vector2(randf_range(-hex_size * 0.55, hex_size * 0.55), randf_range(-hex_size * 0.55, hex_size * 0.55))
+		speckles.append({
+			"pos": center + offset,
+			"radius": randf_range(3.0, 7.0),
+			"shade": randf_range(-0.07, 0.08),
+		})
+	return speckles
 
 
 func _draw() -> void:
@@ -59,22 +80,19 @@ func _draw() -> void:
 		var pts := HexGrid.corners(center, hex_size)
 		var locked := HexGrid.distance(Vector2i.ZERO, hex) > unlocked_radius
 
-		var fill_color := Color(0.15, 0.18, 0.25)
-		var outline_color := Color(0.4, 0.5, 0.7, 0.6)
-		var outline_width := 1.5
-
 		if locked:
-			fill_color = Color(0.05, 0.05, 0.07, 0.6)
-			outline_color = Color(0.2, 0.2, 0.25, 0.3)
-		elif hex == Vector2i.ZERO:
-			fill_color = Color(0.3, 0.2, 0.5)
-		elif hex in highlighted_hexes:
-			fill_color = Color(0.8, 0.3, 0.1, 0.4 + pulse * 0.4)
-			outline_color = Color(1.0, 0.4, 0.1, 0.9)
-			outline_width = 3.0
+			draw_colored_polygon(pts, FOG_COLOR)
+			continue
 
-		draw_colored_polygon(pts, fill_color)
-		draw_polyline(pts + PackedVector2Array([pts[0]]), outline_color, outline_width)
+		draw_colored_polygon(pts, GRASS_BASE)
+		for speckle in _grass_speckles.get(hex, []):
+			var shade: float = speckle["shade"]
+			var c := GRASS_BASE.lightened(shade) if shade > 0.0 else GRASS_BASE.darkened(-shade)
+			draw_circle(speckle["pos"], speckle["radius"], c)
+
+		if hex in highlighted_hexes:
+			draw_circle(center, hex_size * 0.65, Color(0.95, 0.6, 0.15, 0.2 + pulse * 0.25))
+			draw_arc(center, hex_size * 0.65, 0, TAU, 24, Color(1.0, 0.7, 0.2, 0.85), 3.0)
 
 
 func hex_at_pixel(pos: Vector2) -> Vector2i:

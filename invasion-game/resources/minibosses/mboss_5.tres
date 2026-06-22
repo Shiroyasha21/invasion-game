@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="MiniBossData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/mini_boss_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "mboss_5"
+display_name = "Hornet"
+base_hp = 280.0
+base_damage = 25.0
+base_speed = 70.0
+hp_growth_rate = 0.16
+damage_growth_rate = 0.14
+attack_pattern = 0
+movement_behavior = 3
+attack_range = 240.0
+attack_interval = 1.5
+splash_radius = 0.0
+visual_scale = 1.5
+center_damage_multiplier = 3.0
+min_minute = 10.0
+max_minute = 999.0
+coin_reward = 900
+essence_reward = 50

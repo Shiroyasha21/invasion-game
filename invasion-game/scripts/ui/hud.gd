@@ -6,18 +6,22 @@ const TOWER_DATA_PATHS := [
 	"res://resources/towers/tower_sniper.tres",
 ]
 
-@onready var coin_label: Label = $MarginContainer/VBox/CoinLabel
-@onready var time_label: Label = $MarginContainer/VBox/TimeLabel
-@onready var hp_label: Label = $MarginContainer/VBox/HPLabel
-@onready var level_label: Label = $MarginContainer/VBox/LevelLabel
+@onready var coin_label: Label = $StatsPanel/CoinLabel
+@onready var time_label: Label = $TimeLabel
+@onready var hp_label: Label = $StatsPanel/HPLabel
+@onready var level_label: Label = $StatsPanel/LevelLabel
 @onready var attach_prompt_label: Label = $AttachPromptLabel
+@onready var wave_banner_label: Label = $WaveBannerLabel
 @onready var shovel_button: Button = $ShovelButton
-@onready var tower_bar: HBoxContainer = $TowerBar
+@onready var skill_tree_button: Button = $SkillTreeButton
+@onready var shield_button: Button = $ShieldButton
+@onready var tower_bar: VBoxContainer = $TowerBar
 
 var center_piece: CenterPiece
 var _game: Node
 var _tower_buttons: Array[Button] = []
 var _tower_data: Array[TowerData] = []
+var _wave_banner_timer: SceneTreeTimer = null
 
 
 func _ready() -> void:
@@ -28,6 +32,11 @@ func _ready() -> void:
 	_on_run_time_changed(GameState.run_time)
 	_on_essence_changed(GameState.essence, GameState.essence_to_next)
 	shovel_button.pressed.connect(_on_shovel_pressed)
+	skill_tree_button.pressed.connect(_on_skill_tree_pressed)
+	shield_button.pressed.connect(_on_shield_pressed)
+	SkillTree.shield_changed.connect(_on_shield_changed)
+	SkillTree.shield_cooldown_changed.connect(_on_shield_cooldown_changed)
+	_update_shield_button()
 	_setup_tower_bar()
 
 
@@ -49,6 +58,41 @@ func set_shovel_active(active: bool) -> void:
 
 func _on_shovel_pressed() -> void:
 	_game.toggle_shovel()
+
+
+func _on_skill_tree_pressed() -> void:
+	_game.open_skill_tree()
+
+
+func _on_shield_pressed() -> void:
+	_game.activate_shield()
+
+
+func _on_shield_changed(_active: bool) -> void:
+	_update_shield_button()
+
+
+func _on_shield_cooldown_changed(remaining: float, _ready: bool) -> void:
+	_update_shield_button(remaining)
+
+
+func _update_shield_button(cooldown_remaining: float = 0.0) -> void:
+	if SkillTree.shield_active:
+		shield_button.text = "🛡 Active"
+		shield_button.disabled = true
+	elif not SkillTree.shield_ready:
+		shield_button.text = "🛡 %ds" % ceili(cooldown_remaining)
+		shield_button.disabled = true
+	else:
+		shield_button.text = "🛡 Shield"
+		shield_button.disabled = false
+
+
+func show_wave_banner(text: String) -> void:
+	wave_banner_label.text = text
+	wave_banner_label.visible = true
+	_wave_banner_timer = get_tree().create_timer(2.2)
+	_wave_banner_timer.timeout.connect(func(): wave_banner_label.visible = false)
 
 
 func _on_coins_changed(amount: int) -> void:

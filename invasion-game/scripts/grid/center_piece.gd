@@ -39,6 +39,12 @@ func _draw() -> void:
 	var hp_ratio := current_hp / max_hp
 	var scale_factor := 0.7 + level * 0.15
 
+	# Shadow, anchored at the trunk's base
+	var shadow_radius := 36.0 * scale_factor
+	draw_set_transform(Vector2(6.0, 6.0), 0.0, Vector2(1.0, 0.4))
+	draw_circle(Vector2.ZERO, shadow_radius, Color(0.0, 0.0, 0.0, 0.3))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
 	# Trunk
 	var trunk_w := 12.0 * scale_factor
 	var trunk_h := 30.0 * scale_factor

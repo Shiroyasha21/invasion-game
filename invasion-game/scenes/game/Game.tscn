@@ -16,6 +16,10 @@
 [ext_resource type="Resource" path="res://resources/minibosses/mboss_1.tres" id="13_mboss1"]
 [ext_resource type="Resource" path="res://resources/minibosses/mboss_2.tres" id="14_mboss2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/LevelUpUI.tscn" id="15_levelup"]
+[ext_resource type="Resource" path="res://resources/minibosses/mboss_3.tres" id="16_mboss3"]
+[ext_resource type="Resource" path="res://resources/minibosses/mboss_4.tres" id="17_mboss4"]
+[ext_resource type="Resource" path="res://resources/minibosses/mboss_5.tres" id="18_mboss5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SkillTreeUI.tscn" id="19_skilltree"]
 
 [node name="Game" type="Node2D" unique_id=1724296568]
 script = ExtResource("1_vrspl")
@@ -32,7 +36,7 @@ script = ExtResource("7_gynul")
 
 [node name="WaveManager" type="Node" parent="." unique_id=381729001]
 script = ExtResource("3_7qcb4")
-mini_boss_pool = [ExtResource("13_mboss1"), ExtResource("14_mboss2")]
+mini_boss_pool = [ExtResource("13_mboss1"), ExtResource("14_mboss2"), ExtResource("16_mboss3"), ExtResource("17_mboss4"), ExtResource("18_mboss5")]
 
 [node name="CoinVacuum" type="Node2D" parent="." unique_id=1679448892]
 script = ExtResource("7_gg4pt")
@@ -45,3 +49,5 @@ script = ExtResource("9_qf6a8")
 [node name="WavePreview" parent="." unique_id=973536915 instance=ExtResource("11_aptqa")]
 
 [node name="LevelUpUI" parent="." unique_id=973536916 instance=ExtResource("15_levelup")]
+
+[node name="SkillTreeUI" parent="." unique_id=973536917 instance=ExtResource("19_skilltree")]

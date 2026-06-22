@@ -18,4 +18,5 @@ splash_radius = 70.0
 visual_scale = 1.6
 min_minute = 0.0
 max_minute = 999.0
-coin_reward = 40
+coin_reward = 500
+essence_reward = 30

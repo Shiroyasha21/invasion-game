@@ -63,6 +63,18 @@ func play_boss_warning() -> void:
 	_play(_tone(200.0, 0.5, "square", 0.4))
 
 
+func play_wave_cleared() -> void:
+	_play(_tone(520.0, 0.35, "sine", 0.35))
+
+
+func play_wave_incoming() -> void:
+	_play(_tone(330.0, 0.3, "square", 0.3))
+
+
+func play_shield_activate() -> void:
+	_play(_tone(720.0, 0.2, "sine", 0.35))
+
+
 func _play(stream: AudioStreamWAV) -> void:
 	var p := _players[_next_player]
 	_next_player = (_next_player + 1) % _players.size()
