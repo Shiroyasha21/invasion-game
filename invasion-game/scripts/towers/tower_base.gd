@@ -145,12 +145,18 @@ func _fire() -> void:
 	proj.global_position = global_position
 	proj.init(_target, _effective_damage(), _effective_splash(), projectile_color, projectile_radius, projectile_speed, projectile_is_streak)
 
-	if projectile_is_streak:
-		SFX.play_laser()
-	elif splash_radius > 0.0:
-		SFX.play_splash()
-	else:
-		SFX.play_shoot()
+	match animal_type:
+		TowerData.AnimalType.OWL:
+			SFX.play_owl_screech()
+		TowerData.AnimalType.GRENADIER:
+			SFX.play_grenade_launch()
+		_:
+			if projectile_is_streak:
+				SFX.play_laser()
+			elif splash_radius > 0.0:
+				SFX.play_splash()
+			else:
+				SFX.play_shoot()
 
 
 func _draw() -> void:

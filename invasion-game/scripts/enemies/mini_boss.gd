@@ -59,6 +59,8 @@ func setup_from_data(data: MiniBossData, elapsed_minutes: float) -> void:
 # Overrides EnemyBase entirely — bosses don't get stuck single-target
 # fighting a blocking tower, and don't die from touching the centerpiece.
 func _process(delta: float) -> void:
+	rotation = (target_position - global_position).angle()
+
 	_boss_attack_timer -= delta
 	if _boss_attack_timer <= 0.0:
 		_boss_attack_timer = attack_interval
@@ -167,39 +169,99 @@ func _draw() -> void:
 
 	var shadow_offset := Vector2(5.0, radius * 0.4) if not is_flyer else Vector2(8.0, radius * 0.7)
 	var shadow_scale := 0.55 if not is_flyer else 0.4
-	draw_set_transform(shadow_offset, 0.0, Vector2(1.0, shadow_scale))
+	draw_set_transform(shadow_offset.rotated(-rotation), -rotation, Vector2(1.0, shadow_scale))
 	draw_circle(Vector2.ZERO, radius, Color(0.0, 0.0, 0.0, 0.35))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
-	var color := Color(0.6, 0.4, 0.15)
-	if is_flyer:
-		color = Color(0.85, 0.7, 0.1)
-	elif movement_behavior == MiniBossData.MovementBehavior.DISPLACER:
-		color = Color(0.55, 0.42, 0.18)
-	elif movement_behavior == MiniBossData.MovementBehavior.SWEEPER:
-		color = Color(0.45, 0.18, 0.12)
+	match movement_behavior:
+		MiniBossData.MovementBehavior.SWEEPER:
+			_draw_stag_beetle(radius)
+		MiniBossData.MovementBehavior.DISPLACER:
+			_draw_goliath_beetle(radius)
+		MiniBossData.MovementBehavior.FLYER:
+			_draw_hornet(radius)
+		_:
+			if attack_pattern == MiniBossData.AttackPattern.RANGED:
+				_draw_mantis(radius)
+			else:
+				_draw_rhino_beetle(radius)
 
-	if is_flyer:
-		for side in [-1.0, 1.0]:
-			draw_set_transform(Vector2(-radius * 0.2, side * radius * 0.95), 0.0, Vector2(1.8, 0.75))
-			draw_circle(Vector2.ZERO, radius * 0.6, Color(1.0, 1.0, 1.0, 0.45))
-			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
-	# Body: oval abdomen + round head + legs, matching the regular insects.
+func _draw_body(radius: float, color: Color) -> void:
 	draw_set_transform(Vector2(-radius * 0.2, 0), 0.0, Vector2(1.25, 0.85))
 	draw_circle(Vector2.ZERO, radius, color)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	draw_circle(Vector2(radius * 0.75, 0), radius * 0.6, color.darkened(0.12))
 	draw_arc(Vector2(-radius * 0.2, 0), radius * 1.25, 0, TAU, 24, color.darkened(0.4), 3.0)
 
-	if not is_flyer:
-		for side in [-1.0, 1.0]:
-			for i in 4:
-				var lx := -radius * 0.6 + i * radius * 0.4
-				draw_line(Vector2(lx, side * radius * 0.6), Vector2(lx + side * radius * 0.2, side * radius * 1.3), color.darkened(0.5), 3.0)
 
-	# Mandibles
+func _draw_boss_legs(radius: float, color: Color, count: int = 4) -> void:
+	for side in [-1.0, 1.0]:
+		for i in count:
+			var lx := -radius * 0.6 + i * radius * 0.4
+			draw_line(Vector2(lx, side * radius * 0.6), Vector2(lx + side * radius * 0.2, side * radius * 1.3), color, 3.0)
+
+
+# Brute — low and horned, built for charging through whatever's ahead.
+func _draw_rhino_beetle(radius: float) -> void:
+	var color := Color(0.35, 0.22, 0.1)
+	_draw_body(radius, color)
+	_draw_boss_legs(radius, color.darkened(0.5))
+	var horn := PackedVector2Array([
+		Vector2(radius * 1.1, -radius * 0.15), Vector2(radius * 1.9, 0), Vector2(radius * 1.1, radius * 0.15),
+	])
+	draw_colored_polygon(horn, color.darkened(0.3))
+
+
+# Marksman — raised raptorial arms, picks towers off from range.
+func _draw_mantis(radius: float) -> void:
+	var color := Color(0.3, 0.55, 0.2)
+	_draw_body(radius, color)
+	_draw_boss_legs(radius, color.darkened(0.45), 3)
+	for side in [-1.0, 1.0]:
+		var elbow := Vector2(radius * 0.5, side * radius * 0.5)
+		var tip := elbow + Vector2(radius * 0.7, side * radius * 0.1)
+		draw_line(Vector2(radius * 0.2, side * radius * 0.2), elbow, color.darkened(0.3), 4.0)
+		draw_line(elbow, tip, color.darkened(0.3), 4.0)
+
+
+# Stag Beetle — big curved mandibles, sweeps the perimeter before committing.
+func _draw_stag_beetle(radius: float) -> void:
+	var color := Color(0.45, 0.18, 0.12)
+	_draw_body(radius, color)
+	_draw_boss_legs(radius, color.darkened(0.5))
 	for side in [-1.0, 1.0]:
 		var base := Vector2(radius * 1.1, side * radius * 0.25)
-		var tip := base + Vector2(radius * 0.75, side * radius * 0.4)
-		draw_line(base, tip, color.darkened(0.5), 5.0)
+		var mid := base + Vector2(radius * 0.9, side * radius * 0.55)
+		var tip := mid + Vector2(radius * 0.2, side * -0.3)
+		draw_line(base, mid, color.darkened(0.55), 6.0)
+		draw_line(mid, tip, color.darkened(0.55), 6.0)
+
+
+# Goliath Beetle — broad armored shell built for shoving towers aside.
+func _draw_goliath_beetle(radius: float) -> void:
+	var color := Color(0.55, 0.42, 0.18)
+	draw_set_transform(Vector2(-radius * 0.1, 0), 0.0, Vector2(1.2, 1.0))
+	draw_circle(Vector2.ZERO, radius, color)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	draw_circle(Vector2(radius * 0.7, 0), radius * 0.45, color.darkened(0.15))
+	draw_arc(Vector2(-radius * 0.1, 0), radius * 1.2, 0, TAU, 24, color.darkened(0.4), 4.0)
+	draw_line(Vector2(-radius * 1.0, 0), Vector2(radius * 0.6, 0), color.darkened(0.5), 3.0)
+	_draw_boss_legs(radius, color.darkened(0.5))
+
+
+# Hornet — narrow striped flier, the only boss towers can't physically block.
+func _draw_hornet(radius: float) -> void:
+	var color := Color(0.9, 0.75, 0.1)
+	for side in [-1.0, 1.0]:
+		draw_set_transform(Vector2(-radius * 0.2, side * radius * 0.95), 0.0, Vector2(1.8, 0.75))
+		draw_circle(Vector2.ZERO, radius * 0.6, Color(1.0, 1.0, 1.0, 0.45))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+	draw_set_transform(Vector2(-radius * 0.2, 0), 0.0, Vector2(1.5, 0.6))
+	draw_circle(Vector2.ZERO, radius, color)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	for i in 3:
+		var lx := -radius * 0.7 + i * radius * 0.5
+		draw_line(Vector2(lx, -radius * 0.45), Vector2(lx, radius * 0.45), Color(0.1, 0.08, 0.02), 3.0)
+	draw_circle(Vector2(radius * 0.85, 0), radius * 0.45, color.darkened(0.12))

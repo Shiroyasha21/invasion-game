@@ -41,7 +41,9 @@ func _hit() -> void:
 		for node in get_tree().get_nodes_in_group("enemies"):
 			if node != _target and node is Node2D and node.global_position.distance_to(global_position) <= _splash_radius:
 				node.take_damage(_damage)
-	SFX.play_hit()
+		SFX.play_explosion()
+	else:
+		SFX.play_hit()
 
 
 func _draw() -> void:

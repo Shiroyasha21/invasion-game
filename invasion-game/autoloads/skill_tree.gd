@@ -107,9 +107,9 @@ func _process(delta: float) -> void:
 
 	if not shield_ready:
 		_shield_cooldown_timer -= delta
-		emit_signal("shield_cooldown_changed", maxf(_shield_cooldown_timer, 0.0), _shield_cooldown_timer <= 0.0)
 		if _shield_cooldown_timer <= 0.0:
 			shield_ready = true
+		emit_signal("shield_cooldown_changed", maxf(_shield_cooldown_timer, 0.0), shield_ready)
 
 	if vines_unlocked:
 		_vines_timer -= delta
