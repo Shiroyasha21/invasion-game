@@ -51,17 +51,12 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2(-trunk_w / 2, -trunk_h), Vector2(trunk_w, trunk_h)),
 		Color(0.45, 0.28, 0.12))
 
-	# Canopy layers (more as level increases)
+	# Canopy layers (more as level increases). Wilts toward brown as HP drops
+	# instead of showing a separate HP bar — the tree itself tells the story.
 	var layers := mini(level, 4)
 	for i in layers:
 		var r := (28.0 + i * 8.0) * scale_factor
 		var y_offset := (-trunk_h - r * 0.5 + i * 10.0 * scale_factor)
 		var green := Color(0.1, 0.6, 0.15).lerp(Color(0.3, 0.9, 0.2), float(i) / 4.0)
+		green = green.lerp(Color(0.4, 0.3, 0.12), 1.0 - hp_ratio)
 		draw_circle(Vector2(0, y_offset), r, green)
-
-	# HP bar
-	var bar_w := 80.0
-	var bar_pos := Vector2(-bar_w / 2.0, -80.0 * scale_factor)
-	draw_rect(Rect2(bar_pos, Vector2(bar_w, 10)), Color(0.2, 0.1, 0.1))
-	draw_rect(Rect2(bar_pos, Vector2(bar_w * hp_ratio, 10)), Color(0.2, 0.9, 0.3))
-	draw_rect(Rect2(bar_pos, Vector2(bar_w, 10)), Color(1.0, 1.0, 1.0, 0.3), false, 1.5)

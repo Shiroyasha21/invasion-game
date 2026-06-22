@@ -155,7 +155,7 @@ func _difficulty_multiplier() -> float:
 
 
 func _coin_value_for_time() -> int:
-	return mini(2 + int(_elapsed_minutes() / 1.8), 14)
+	return mini(4 + int(_elapsed_minutes() / 0.9), 18)
 
 
 func _max_directions_for_wave(wave_index: int) -> int:

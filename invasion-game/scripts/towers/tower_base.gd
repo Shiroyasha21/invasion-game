@@ -189,12 +189,6 @@ func _draw() -> void:
 	if SkillTree.shield_active:
 		draw_arc(Vector2.ZERO, body_radius + 12.0, 0, TAU, 32, Color(0.3, 0.7, 1.0, 0.7), 4.0)
 
-	# HP bar
-	var bar_w := 50.0
-	var bar_y := -body_radius - 14.0
-	draw_rect(Rect2(Vector2(-bar_w / 2, bar_y), Vector2(bar_w, 7)), Color(0.2, 0.1, 0.1))
-	draw_rect(Rect2(Vector2(-bar_w / 2, bar_y), Vector2(bar_w * hp_ratio, 7)), Color(0.2, 0.85, 0.3))
-
 
 # Squat, round, tongue-flicks at its target.
 func _draw_frog(color: Color) -> void:
