@@ -18,6 +18,7 @@ signal destroyed(hex: Vector2i)
 @export var projectile_is_streak: bool = false
 @export var target_mode: TowerData.TargetMode = TowerData.TargetMode.NEAREST
 @export var animal_type: TowerData.AnimalType = TowerData.AnimalType.FROG
+@export var can_target_flying: bool = false
 @export var projectile_scene: PackedScene
 
 const DAMAGE_FLASH_DURATION := 0.15
@@ -48,6 +49,7 @@ func setup(data: TowerData) -> void:
 	projectile_is_streak = data.projectile_is_streak
 	target_mode = data.target_mode
 	animal_type = data.animal_type
+	can_target_flying = data.can_target_flying
 
 
 func _ready() -> void:
@@ -121,6 +123,8 @@ func _find_target() -> EnemyBase:
 	var best_dist := -1.0
 	for node in get_tree().get_nodes_in_group("enemies"):
 		if node is EnemyBase:
+			if node.is_flying and not can_target_flying:
+				continue
 			var d := global_position.distance_to(node.global_position)
 			if d > range_now:
 				continue
@@ -166,6 +170,10 @@ func _draw() -> void:
 			_draw_bear(color)
 		TowerData.AnimalType.MONKEY:
 			_draw_monkey(color)
+		TowerData.AnimalType.OWL:
+			_draw_owl(color)
+		TowerData.AnimalType.GRENADIER:
+			_draw_grenadier(color)
 		_:
 			_draw_frog(color)
 
@@ -213,3 +221,36 @@ func _draw_monkey(color: Color) -> void:
 	var arm_end := Vector2(barrel_length, 0)
 	draw_line(Vector2.ZERO, arm_end, color.darkened(0.15), 5.0)
 	draw_circle(arm_end, body_radius * 0.24, Color(0.55, 0.5, 0.45))
+
+
+# Perched and watchful, swivels its head and dives on flying threats.
+func _draw_owl(color: Color) -> void:
+	for side in [-1.0, 1.0]:
+		draw_set_transform(Vector2(0, side * body_radius * 0.25), 0.0, Vector2(0.55, 1.3))
+		draw_circle(Vector2(side * body_radius * 0.75, 0), body_radius * 0.65, color.darkened(0.15))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+	draw_circle(Vector2.ZERO, body_radius, color)
+	for side in [-1.0, 1.0]:
+		var eye_pos := Vector2(body_radius * 0.3, side * body_radius * 0.38)
+		draw_circle(eye_pos, body_radius * 0.3, Color(1.0, 0.95, 0.8))
+		draw_circle(eye_pos, body_radius * 0.15, Color(0.05, 0.05, 0.05))
+	var beak := PackedVector2Array([
+		Vector2(body_radius * 0.85, -body_radius * 0.12),
+		Vector2(body_radius * 1.25, 0),
+		Vector2(body_radius * 0.85, body_radius * 0.12),
+	])
+	draw_colored_polygon(beak, Color(0.9, 0.6, 0.1))
+
+
+# A soldier who wandered into the wrong forest. Lobs grenades.
+func _draw_grenadier(color: Color) -> void:
+	var body_pts := PackedVector2Array([
+		Vector2(-body_radius * 0.5, -body_radius * 0.65), Vector2(body_radius * 0.5, -body_radius * 0.65),
+		Vector2(body_radius * 0.5, body_radius * 0.75), Vector2(-body_radius * 0.5, body_radius * 0.75),
+	])
+	draw_colored_polygon(body_pts, color)
+	draw_circle(Vector2(0, -body_radius * 0.95), body_radius * 0.42, Color(0.85, 0.7, 0.55))
+	draw_arc(Vector2(0, -body_radius * 1.0), body_radius * 0.48, PI, TAU, 16, Color(0.25, 0.35, 0.2), 6.0)
+	draw_line(Vector2.ZERO, Vector2(barrel_length, 0), Color(0.2, 0.2, 0.2), 8.0)
+	draw_circle(Vector2(barrel_length, 0), body_radius * 0.22, Color(0.25, 0.5, 0.2))

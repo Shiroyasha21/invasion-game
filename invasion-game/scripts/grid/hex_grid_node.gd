@@ -8,7 +8,7 @@ signal unlocked_radius_changed(new_radius: int)
 @export var initial_unlocked_radius: int = 3  # how much is playable/visible at start
 
 const GRASS_BASE := Color(0.16, 0.36, 0.14)
-const FOG_COLOR := Color(0.03, 0.06, 0.03, 0.92)
+const STONE_BASE := Color(0.32, 0.31, 0.33)
 
 var tiles: Dictionary = {}  # Vector2i -> bool (occupied)
 var unlocked_radius: int
@@ -80,15 +80,15 @@ func _draw() -> void:
 		var pts := HexGrid.corners(center, hex_size)
 		var locked := HexGrid.distance(Vector2i.ZERO, hex) > unlocked_radius
 
-		if locked:
-			draw_colored_polygon(pts, FOG_COLOR)
-			continue
-
-		draw_colored_polygon(pts, GRASS_BASE)
+		var base := STONE_BASE if locked else GRASS_BASE
+		draw_colored_polygon(pts, base)
 		for speckle in _grass_speckles.get(hex, []):
 			var shade: float = speckle["shade"]
-			var c := GRASS_BASE.lightened(shade) if shade > 0.0 else GRASS_BASE.darkened(-shade)
+			var c := base.lightened(shade) if shade > 0.0 else base.darkened(-shade)
 			draw_circle(speckle["pos"], speckle["radius"], c)
+
+		if locked:
+			continue
 
 		if hex in highlighted_hexes:
 			draw_circle(center, hex_size * 0.65, Color(0.95, 0.6, 0.15, 0.2 + pulse * 0.25))

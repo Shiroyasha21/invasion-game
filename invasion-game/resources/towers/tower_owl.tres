@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/towers/tower_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "owl"
+display_name = "Owl"
+cost = 190
+attack_range = 240.0
+attack_damage = 12.0
+attack_speed = 1.1
+max_hp = 45.0
+splash_radius = 0.0
+body_color = Color(0.55, 0.42, 0.28, 1)
+body_radius = 24.0
+barrel_length = 0.0
+projectile_color = Color(1.0, 0.95, 0.6, 1)
+projectile_radius = 5.0
+projectile_speed = 500.0
+projectile_is_streak = false
+target_mode = 0
+animal_type = 3
+can_target_flying = true

@@ -4,6 +4,8 @@ const TOWER_DATA_PATHS := [
 	"res://resources/towers/tower_arrow.tres",
 	"res://resources/towers/tower_cannon.tres",
 	"res://resources/towers/tower_sniper.tres",
+	"res://resources/towers/tower_owl.tres",
+	"res://resources/towers/tower_grenadier.tres",
 ]
 
 @onready var coin_label: Label = $StatsPanel/CoinLabel
@@ -12,11 +14,11 @@ const TOWER_DATA_PATHS := [
 @onready var level_label: Label = $StatsPanel/LevelLabel
 @onready var attach_prompt_label: Label = $AttachPromptLabel
 @onready var wave_banner_label: Label = $WaveBannerLabel
-@onready var shovel_button: Button = $ShovelButton
-@onready var skill_tree_button: Button = $SkillTreeButton
-@onready var shield_button: Button = $ShieldButton
-@onready var shield_label: Label = $ShieldButton/Row/Label
-@onready var tower_bar: VBoxContainer = $TowerBar
+@onready var shovel_button: Button = $ActionRow/ShovelButton
+@onready var skill_tree_button: Button = $ActionRow/SkillTreeButton
+@onready var shield_button: Button = $ActionRow/ShieldButton
+@onready var shield_label: Label = $ActionRow/ShieldButton/Row/Label
+@onready var tower_bar: HBoxContainer = $TowerScroll/TowerBar
 
 var center_piece: CenterPiece
 var _game: Node
@@ -132,16 +134,16 @@ func _setup_tower_bar() -> void:
 			continue
 		var data: TowerData = _tower_data[i]
 
-		var icon := button.get_node("Row/Icon") as TowerIcon
+		var icon := button.get_node("VBox/Icon") as TowerIcon
 		if icon != null:
 			icon.animal_type = data.animal_type
 			icon.body_color = data.body_color
 			icon.queue_redraw()
 
-		var name_label := button.get_node("Row/Labels/NameLabel") as Label
+		var name_label := button.get_node("VBox/NameLabel") as Label
 		if name_label != null:
 			name_label.text = data.display_name
-		var cost_label := button.get_node("Row/Labels/CostLabel") as Label
+		var cost_label := button.get_node("VBox/CostLabel") as Label
 		if cost_label != null:
 			cost_label.text = str(data.cost)
 

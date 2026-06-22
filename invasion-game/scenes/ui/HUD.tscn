@@ -16,7 +16,7 @@ offset_right = 100.0
 offset_bottom = 50.0
 grow_horizontal = 2
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 28
 
 [node name="AttachPromptLabel" type="Label" parent="." unique_id=583650290]
 visible = false
@@ -46,203 +46,281 @@ theme_override_colors/font_color = Color(0.6, 1.0, 0.7, 1)
 [node name="StatsPanel" type="VBoxContainer" parent="." unique_id=723569033]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -160.0
+offset_left = -180.0
 offset_top = 16.0
 offset_right = -16.0
-offset_bottom = 120.0
+offset_bottom = 130.0
 grow_horizontal = 0
 
 [node name="CoinLabel" type="Label" parent="StatsPanel" unique_id=1089277599]
 layout_mode = 2
 horizontal_alignment = 2
+theme_override_font_sizes/font_size = 20
 
 [node name="HPLabel" type="Label" parent="StatsPanel" unique_id=583650288]
 layout_mode = 2
 horizontal_alignment = 2
+theme_override_font_sizes/font_size = 20
 
 [node name="LevelLabel" type="Label" parent="StatsPanel" unique_id=583650289]
 layout_mode = 2
 horizontal_alignment = 2
+theme_override_font_sizes/font_size = 20
 
-[node name="TowerBar" type="VBoxContainer" parent="." unique_id=3940182771]
-anchor_left = 0.0
-anchor_top = 0.0
-offset_left = 16.0
-offset_top = 16.0
-theme_override_constants/separation = 8
-
-[node name="ArrowButton" type="Button" parent="TowerBar" unique_id=3940182772]
-layout_mode = 2
-custom_minimum_size = Vector2(168, 56)
-alignment = 0
-
-[node name="Row" type="HBoxContainer" parent="TowerBar/ArrowButton" unique_id=3940182780]
-mouse_filter = 2
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_right = -4.0
-theme_override_constants/separation = 8
-
-[node name="Icon" type="Control" parent="TowerBar/ArrowButton/Row" unique_id=3940182781]
-mouse_filter = 2
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-script = ExtResource("2_towericon")
-animal_type = 0
-body_color = Color(0.3, 0.85, 0.4, 1)
-
-[node name="Labels" type="VBoxContainer" parent="TowerBar/ArrowButton/Row" unique_id=3940182782]
-mouse_filter = 2
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="NameLabel" type="Label" parent="TowerBar/ArrowButton/Row/Labels" unique_id=3940182783]
-mouse_filter = 2
-layout_mode = 2
-text = "Frog"
-theme_override_font_sizes/font_size = 15
-
-[node name="CostLabel" type="Label" parent="TowerBar/ArrowButton/Row/Labels" unique_id=3940182784]
-mouse_filter = 2
-layout_mode = 2
-text = "100"
-theme_override_font_sizes/font_size = 14
-
-[node name="CannonButton" type="Button" parent="TowerBar" unique_id=3940182773]
-layout_mode = 2
-custom_minimum_size = Vector2(168, 56)
-alignment = 0
-
-[node name="Row" type="HBoxContainer" parent="TowerBar/CannonButton" unique_id=3940182785]
-mouse_filter = 2
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_right = -4.0
-theme_override_constants/separation = 8
-
-[node name="Icon" type="Control" parent="TowerBar/CannonButton/Row" unique_id=3940182786]
-mouse_filter = 2
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-script = ExtResource("2_towericon")
-animal_type = 1
-body_color = Color(0.45, 0.32, 0.18, 1)
-
-[node name="Labels" type="VBoxContainer" parent="TowerBar/CannonButton/Row" unique_id=3940182787]
-mouse_filter = 2
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="NameLabel" type="Label" parent="TowerBar/CannonButton/Row/Labels" unique_id=3940182788]
-mouse_filter = 2
-layout_mode = 2
-text = "Bear"
-theme_override_font_sizes/font_size = 15
-
-[node name="CostLabel" type="Label" parent="TowerBar/CannonButton/Row/Labels" unique_id=3940182789]
-mouse_filter = 2
-layout_mode = 2
-text = "160"
-theme_override_font_sizes/font_size = 14
-
-[node name="SniperButton" type="Button" parent="TowerBar" unique_id=3940182774]
-layout_mode = 2
-custom_minimum_size = Vector2(168, 56)
-alignment = 0
-
-[node name="Row" type="HBoxContainer" parent="TowerBar/SniperButton" unique_id=3940182790]
-mouse_filter = 2
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_right = -4.0
-theme_override_constants/separation = 8
-
-[node name="Icon" type="Control" parent="TowerBar/SniperButton/Row" unique_id=3940182791]
-mouse_filter = 2
-custom_minimum_size = Vector2(42, 42)
-layout_mode = 2
-script = ExtResource("2_towericon")
-animal_type = 2
-body_color = Color(0.6, 0.45, 0.32, 1)
-
-[node name="Labels" type="VBoxContainer" parent="TowerBar/SniperButton/Row" unique_id=3940182792]
-mouse_filter = 2
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="NameLabel" type="Label" parent="TowerBar/SniperButton/Row/Labels" unique_id=3940182793]
-mouse_filter = 2
-layout_mode = 2
-text = "Monkey"
-theme_override_font_sizes/font_size = 15
-
-[node name="CostLabel" type="Label" parent="TowerBar/SniperButton/Row/Labels" unique_id=3940182794]
-mouse_filter = 2
-layout_mode = 2
-text = "220"
-theme_override_font_sizes/font_size = 14
-
-[node name="ShovelButton" type="Button" parent="." unique_id=2074901135]
-anchors_preset = 3
-anchor_left = 1.0
+[node name="ActionRow" type="HBoxContainer" parent="." unique_id=2074901100]
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -62.0
-offset_top = -31.0
-grow_horizontal = 0
+offset_left = -200.0
+offset_top = -210.0
+offset_right = 200.0
+offset_bottom = -134.0
+grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="ShovelButton" type="Button" parent="ActionRow" unique_id=2074901135]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 76)
 text = "🪣 Sell"
 
-[node name="SkillTreeButton" type="Button" parent="." unique_id=2074901136]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -41.0
-offset_right = 100.0
-offset_bottom = -10.0
-grow_vertical = 0
+[node name="SkillTreeButton" type="Button" parent="ActionRow" unique_id=2074901136]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 76)
 text = "🌳 Skills"
 
-[node name="ShieldButton" type="Button" parent="." unique_id=2074901137]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 108.0
-offset_top = -41.0
-offset_right = 230.0
-offset_bottom = -10.0
-grow_vertical = 0
-alignment = 0
+[node name="ShieldButton" type="Button" parent="ActionRow" unique_id=2074901137]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 76)
+alignment = 1
 
-[node name="Row" type="HBoxContainer" parent="ShieldButton" unique_id=2074901138]
+[node name="Row" type="HBoxContainer" parent="ActionRow/ShieldButton" unique_id=2074901138]
 mouse_filter = 2
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_right = -4.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 6
 
-[node name="Icon" type="Control" parent="ShieldButton/Row" unique_id=2074901139]
+[node name="Icon" type="Control" parent="ActionRow/ShieldButton/Row" unique_id=2074901139]
 mouse_filter = 2
 custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 script = ExtResource("3_skillicon")
 icon_type = 0
 
-[node name="Label" type="Label" parent="ShieldButton/Row" unique_id=2074901140]
+[node name="Label" type="Label" parent="ActionRow/ShieldButton/Row" unique_id=2074901140]
 mouse_filter = 2
 layout_mode = 2
 text = "Shield"
+
+[node name="TowerScroll" type="ScrollContainer" parent="." unique_id=3940182700]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -124.0
+offset_right = 480.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+vertical_scroll_mode = 0
+
+[node name="TowerBar" type="HBoxContainer" parent="TowerScroll" unique_id=3940182771]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ArrowButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182772]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 100)
+
+[node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/ArrowButton" unique_id=3940182780]
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 4.0
+offset_bottom = -4.0
+alignment = 1
+
+[node name="Icon" type="Control" parent="TowerScroll/TowerBar/ArrowButton/VBox" unique_id=3940182781]
+mouse_filter = 2
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("2_towericon")
+animal_type = 0
+body_color = Color(0.3, 0.85, 0.4, 1)
+
+[node name="NameLabel" type="Label" parent="TowerScroll/TowerBar/ArrowButton/VBox" unique_id=3940182783]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "Frog"
+theme_override_font_sizes/font_size = 14
+
+[node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/ArrowButton/VBox" unique_id=3940182784]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "100"
+theme_override_font_sizes/font_size = 14
+
+[node name="CannonButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182773]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 100)
+
+[node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/CannonButton" unique_id=3940182785]
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 4.0
+offset_bottom = -4.0
+alignment = 1
+
+[node name="Icon" type="Control" parent="TowerScroll/TowerBar/CannonButton/VBox" unique_id=3940182786]
+mouse_filter = 2
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("2_towericon")
+animal_type = 1
+body_color = Color(0.45, 0.32, 0.18, 1)
+
+[node name="NameLabel" type="Label" parent="TowerScroll/TowerBar/CannonButton/VBox" unique_id=3940182788]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "Bear"
+theme_override_font_sizes/font_size = 14
+
+[node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/CannonButton/VBox" unique_id=3940182789]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "160"
+theme_override_font_sizes/font_size = 14
+
+[node name="SniperButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182774]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 100)
+
+[node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/SniperButton" unique_id=3940182790]
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 4.0
+offset_bottom = -4.0
+alignment = 1
+
+[node name="Icon" type="Control" parent="TowerScroll/TowerBar/SniperButton/VBox" unique_id=3940182791]
+mouse_filter = 2
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("2_towericon")
+animal_type = 2
+body_color = Color(0.6, 0.45, 0.32, 1)
+
+[node name="NameLabel" type="Label" parent="TowerScroll/TowerBar/SniperButton/VBox" unique_id=3940182793]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "Monkey"
+theme_override_font_sizes/font_size = 14
+
+[node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/SniperButton/VBox" unique_id=3940182794]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "220"
+theme_override_font_sizes/font_size = 14
+
+[node name="OwlButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182795]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 100)
+
+[node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/OwlButton" unique_id=3940182796]
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 4.0
+offset_bottom = -4.0
+alignment = 1
+
+[node name="Icon" type="Control" parent="TowerScroll/TowerBar/OwlButton/VBox" unique_id=3940182797]
+mouse_filter = 2
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("2_towericon")
+animal_type = 3
+body_color = Color(0.55, 0.42, 0.28, 1)
+
+[node name="NameLabel" type="Label" parent="TowerScroll/TowerBar/OwlButton/VBox" unique_id=3940182798]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "Owl"
+theme_override_font_sizes/font_size = 14
+
+[node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/OwlButton/VBox" unique_id=3940182799]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "190"
+theme_override_font_sizes/font_size = 14
+
+[node name="GrenadierButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182800]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 100)
+
+[node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/GrenadierButton" unique_id=3940182801]
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 4.0
+offset_bottom = -4.0
+alignment = 1
+
+[node name="Icon" type="Control" parent="TowerScroll/TowerBar/GrenadierButton/VBox" unique_id=3940182802]
+mouse_filter = 2
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("2_towericon")
+animal_type = 4
+body_color = Color(0.35, 0.4, 0.25, 1)
+
+[node name="NameLabel" type="Label" parent="TowerScroll/TowerBar/GrenadierButton/VBox" unique_id=3940182803]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "Grenadier"
+theme_override_font_sizes/font_size = 14
+
+[node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/GrenadierButton/VBox" unique_id=3940182804]
+mouse_filter = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "320"
+theme_override_font_sizes/font_size = 14

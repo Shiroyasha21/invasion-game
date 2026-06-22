@@ -81,14 +81,14 @@ func activate_shield() -> void:
 
 func _on_wave_cleared(_wave_index: int) -> void:
 	SFX.play_wave_cleared()
-	hud.show_wave_banner("Wave Cleared!")
+	hud.show_wave_banner("All Clear")
 
 
 func _on_wave_incoming(wave_index: int) -> void:
 	if wave_index == 0:
 		return
 	SFX.play_wave_incoming()
-	hud.show_wave_banner("Wave %d Incoming" % (wave_index + 1))
+	hud.show_wave_banner("Swarm Incoming")
 
 
 func _input(event: InputEvent) -> void:

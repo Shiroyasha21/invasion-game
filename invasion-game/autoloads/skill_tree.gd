@@ -34,6 +34,13 @@ var _shield_cooldown_timer: float = 0.0
 var _vines_timer: float = VINES_COOLDOWN
 
 
+func _ready() -> void:
+	# Cooldowns must keep ticking even while the skill tree or level-up
+	# screen pauses the game — otherwise checking the shield's status is
+	# exactly what makes it look stuck.
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+
 func start() -> void:
 	shield_active = false
 	shield_ready = true

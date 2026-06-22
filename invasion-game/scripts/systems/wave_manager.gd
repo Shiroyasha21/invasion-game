@@ -155,7 +155,7 @@ func _difficulty_multiplier() -> float:
 
 
 func _coin_value_for_time() -> int:
-	return mini(2 + int(_elapsed_minutes() / 1.8), 12)
+	return mini(2 + int(_elapsed_minutes() / 1.8), 14)
 
 
 func _max_directions_for_wave(wave_index: int) -> int:
@@ -209,7 +209,10 @@ func _spawn_enemy(dir: int) -> void:
 	enemy.reached_center.connect(_on_enemy_died)
 	enemy.init(spawn_pos, target_pos, center_piece)
 
-	if wave_preview != null:
+	# Warning markers help the player learn the surround mechanic early on,
+	# but once hordes are spawning every fraction of a second they're just
+	# screen clutter — drop them after the first few waves.
+	if wave_preview != null and current_wave_index <= 2:
 		wave_preview.flash_warning(_warning_position(dir))
 
 

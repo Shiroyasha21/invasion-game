@@ -77,19 +77,31 @@ func _draw() -> void:
 			draw_circle(Vector2.ZERO, radius * 0.55, Color(1.0, 1.0, 1.0, 0.4))
 			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
+	# Body: oval abdomen (rear) + smaller round head (front) + legs, instead
+	# of a single circle — reads as a bug rather than a dot.
+	draw_set_transform(Vector2(-radius * 0.2, 0), 0.0, Vector2(1.25, 0.85))
 	draw_circle(Vector2.ZERO, radius, fill)
-	draw_arc(Vector2.ZERO, radius + 4.0, 0, TAU, 20, type_color.lightened(0.3), 2.0)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	draw_circle(Vector2(radius * 0.75, 0), radius * 0.55, fill.darkened(0.12))
+	draw_arc(Vector2(-radius * 0.2, 0), radius * 1.25, 0, TAU, 18, type_color.lightened(0.3), 2.0)
+
+	var leg_color := type_color.darkened(0.45)
+	if not is_flying:
+		for side in [-1.0, 1.0]:
+			for i in 3:
+				var lx := -radius * 0.5 + i * radius * 0.45
+				draw_line(Vector2(lx, side * radius * 0.55), Vector2(lx + side * radius * 0.25, side * radius * 1.15), leg_color, 2.0)
 
 	# Antennae give every enemy an insect read regardless of type.
 	var antenna_color := type_color.darkened(0.3)
 	for side in [-1.0, 1.0]:
-		var base := Vector2(-radius * 0.25, side * radius * 0.4)
-		var tip := base + Vector2(-radius * 0.55, side * radius * 0.5)
+		var base := Vector2(radius * 0.95, side * radius * 0.25)
+		var tip := base + Vector2(radius * 0.5, side * radius * 0.55)
 		draw_line(base, tip, antenna_color, 2.0)
 		draw_circle(tip, 2.0, antenna_color)
 
 	if is_wealthy:
-		draw_arc(Vector2.ZERO, radius + 8.0, 0, TAU, 24, Color(1.0, 1.0, 0.6, 0.9), 3.0)
+		draw_arc(Vector2.ZERO, radius + 10.0, 0, TAU, 24, Color(1.0, 1.0, 0.6, 0.9), 3.0)
 
 
 func init(spawn_pixel: Vector2, target_pos: Vector2, cp: CenterPiece = null) -> void:

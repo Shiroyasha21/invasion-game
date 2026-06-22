@@ -1,6 +1,6 @@
 extends Node
 
-const STARTING_COINS := 900
+const STARTING_COINS := 1000
 const ESSENCE_BASE_THRESHOLD := 8
 const ESSENCE_GROWTH := 1.3
 const RUN_DURATION := 1080.0  # 18 minutes

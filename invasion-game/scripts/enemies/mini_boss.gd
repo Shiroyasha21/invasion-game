@@ -27,6 +27,7 @@ func _ready() -> void:
 	add_to_group("mini_bosses")
 	if movement_behavior == MiniBossData.MovementBehavior.FLYER:
 		collision_mask = 0
+		is_flying = true
 
 
 # elapsed_minutes is the run time at the moment of spawn — stats are
@@ -52,6 +53,7 @@ func setup_from_data(data: MiniBossData, elapsed_minutes: float) -> void:
 		_sweep_point = target_position + offset.rotated(angle)
 	if movement_behavior == MiniBossData.MovementBehavior.FLYER:
 		collision_mask = 0
+		is_flying = true
 
 
 # Overrides EnemyBase entirely — bosses don't get stuck single-target
@@ -183,11 +185,21 @@ func _draw() -> void:
 			draw_circle(Vector2.ZERO, radius * 0.6, Color(1.0, 1.0, 1.0, 0.45))
 			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
+	# Body: oval abdomen + round head + legs, matching the regular insects.
+	draw_set_transform(Vector2(-radius * 0.2, 0), 0.0, Vector2(1.25, 0.85))
 	draw_circle(Vector2.ZERO, radius, color)
-	draw_arc(Vector2.ZERO, radius + 5.0, 0, TAU, 24, color.darkened(0.4), 3.0)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	draw_circle(Vector2(radius * 0.75, 0), radius * 0.6, color.darkened(0.12))
+	draw_arc(Vector2(-radius * 0.2, 0), radius * 1.25, 0, TAU, 24, color.darkened(0.4), 3.0)
+
+	if not is_flyer:
+		for side in [-1.0, 1.0]:
+			for i in 4:
+				var lx := -radius * 0.6 + i * radius * 0.4
+				draw_line(Vector2(lx, side * radius * 0.6), Vector2(lx + side * radius * 0.2, side * radius * 1.3), color.darkened(0.5), 3.0)
 
 	# Mandibles
 	for side in [-1.0, 1.0]:
-		var base := Vector2(radius * 0.4, side * radius * 0.25)
+		var base := Vector2(radius * 1.1, side * radius * 0.25)
 		var tip := base + Vector2(radius * 0.75, side * radius * 0.4)
 		draw_line(base, tip, color.darkened(0.5), 5.0)

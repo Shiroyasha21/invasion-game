@@ -15,38 +15,30 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -260.0
-offset_right = 280.0
-offset_bottom = 260.0
+offset_left = -260.0
+offset_top = -120.0
+offset_right = 260.0
+offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 18
 
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
 layout_mode = 2
 text = "Defend the Tree"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 30
 
 [node name="BodyLabel" type="Label" parent="Panel/VBox"]
 layout_mode = 2
+horizontal_alignment = 1
 autowrap_mode = 2
-text = "Survive 18 minutes as insects swarm in from every side.
-
-• Tap a tile to place the selected tower
-• Tap the Shovel, then a tower, to sell it
-• Drag your finger to vacuum up coins and essence
-• Tap the tree (or the Skills button) for its skill tree
-• Kill enemies to level up and pick an upgrade card
-• Watch for warning markers — mini-bosses hit hard
-
-The tree's HP is your life. If it falls, the run ends."
+text = "Protect the forest."
 
 [node name="StartButton" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 56)
-text = "Start Defending"
+custom_minimum_size = Vector2(0, 64)
+text = "Start"

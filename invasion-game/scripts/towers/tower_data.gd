@@ -2,7 +2,7 @@ class_name TowerData
 extends Resource
 
 enum TargetMode { NEAREST, FARTHEST }
-enum AnimalType { FROG, BEAR, MONKEY }
+enum AnimalType { FROG, BEAR, MONKEY, OWL, GRENADIER }
 
 @export var id: String = "arrow"
 @export var animal_type: AnimalType = AnimalType.FROG
@@ -21,3 +21,4 @@ enum AnimalType { FROG, BEAR, MONKEY }
 @export var projectile_speed: float = 400.0
 @export var projectile_is_streak: bool = false
 @export var target_mode: TargetMode = TargetMode.NEAREST
+@export var can_target_flying: bool = false  # only AA-capable towers can hit flying enemies/bosses
