@@ -63,29 +63,29 @@ func _refresh() -> void:
 	_update_vines_button()
 
 	if SkillTree.weaken_unlocked:
-		weaken_label.text = "Weaken Boss — Unlocked\nFuture mini-bosses are weaker"
+		weaken_label.text = "Weaken Boss (Passive) — Unlocked\nFuture mini-bosses are weaker"
 		weaken_button.disabled = true
 	else:
-		weaken_label.text = "Unlock Weaken Boss (%d coins)\nFuture mini-bosses are weaker" % SkillTree.WEAKEN_COST
+		weaken_label.text = "Unlock Weaken Boss — Passive (%d coins)\nFuture mini-bosses are weaker" % SkillTree.WEAKEN_COST
 		weaken_button.disabled = false
 
 
 func _update_vines_button(cooldown_remaining: float = 0.0) -> void:
 	if not SkillTree.vines_unlocked:
-		vines_label.text = "Unlock Vines (%d coins)\nActive: roots and slows enemies near the tree" % SkillTree.VINES_COST
+		vines_label.text = "Unlock Vines — Ultimate (%d coins)\nSlows and damages everything in sight, long cooldown" % SkillTree.VINES_COST
 		vines_button.disabled = false
 	elif not SkillTree.vines_ready:
-		vines_label.text = "Vines — recharging (%ds)" % ceili(cooldown_remaining)
+		vines_label.text = "Vines (Ultimate) — recharging (%ds)" % ceili(cooldown_remaining)
 		vines_button.disabled = true
 	else:
-		vines_label.text = "Activate Vines"
+		vines_label.text = "Activate Vines (Ultimate)"
 		vines_button.disabled = false
 
 
 func _update_shield_label(active: bool) -> void:
 	if active:
-		shield_label.text = "Shield: ACTIVE"
+		shield_label.text = "Shield (Active): ACTIVE"
 	elif SkillTree.shield_ready:
-		shield_label.text = "Shield — ready (use the Shield button on the HUD)"
+		shield_label.text = "Shield (Active) — ready (use the Shield button on the HUD)"
 	else:
-		shield_label.text = "Shield — on cooldown"
+		shield_label.text = "Shield (Active) — on cooldown"

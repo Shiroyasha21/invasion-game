@@ -75,8 +75,10 @@ func play_shield_activate() -> void:
 	_play(_sweep(500.0, 900.0, 0.2, "sine", 0.35))
 
 
+# Ultimate — bigger and longer than the other ability sounds.
 func play_vines_activate() -> void:
-	_play(_sweep(280.0, 480.0, 0.3, "sine", 0.3))
+	_play(_sweep(150.0, 90.0, 0.5, "noise", 0.35))
+	_play(_sweep(220.0, 520.0, 0.6, "sine", 0.4))
 
 
 # Owl: sharp descending screech.

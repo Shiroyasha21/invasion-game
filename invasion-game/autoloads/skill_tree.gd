@@ -1,28 +1,32 @@
 extends Node
 
-# Centerpiece skill tree state. Shield and Vines are player-activated
-# emergency abilities on their own cooldowns; Weaken Boss is a passive
-# effect. Shield is free from the start; Vines and Weaken Boss are
-# unlocked mid-run by spending coins. Towers/enemies/bosses read this
-# singleton directly (see TowerBase.take_damage, EnemyBase.apply_slow,
-# WaveManager._spawn_mini_boss) rather than needing per-instance wiring.
+# Centerpiece skill tree: exactly three skills.
+#   Shield   — ACTIVE, free from the start, short cooldown, modest effect.
+#   Weaken   — PASSIVE, unlocked with coins, always-on once bought.
+#   Vines    — ULTIMATE, unlocked with coins, long cooldown, hits the whole
+#              visible field hard (slow + direct damage) — a rare, dramatic
+#              move rather than a frequent utility.
+# Towers/enemies/bosses read this singleton directly (see
+# TowerBase.take_damage, EnemyBase.apply_slow, WaveManager._spawn_mini_boss)
+# rather than needing per-instance wiring.
 
 signal shield_changed(active: bool)
 signal shield_cooldown_changed(remaining: float, ready: bool)
-signal vines_triggered(radius: float, slow_mult: float, duration: float)
+signal vines_triggered(radius: float, slow_mult: float, duration: float, damage: float)
 signal vines_cooldown_changed(remaining: float, ready: bool)
 signal vines_unlocked_changed
 signal weaken_unlocked_changed
 
 const SHIELD_COOLDOWN := 30.0
 const SHIELD_DURATION := 4.0
-const VINES_COOLDOWN := 16.0
-const VINES_DURATION := 3.0
-const VINES_SLOW_MULT := 0.45
-const VINES_RADIUS := 260.0
+const VINES_COOLDOWN := 75.0
+const VINES_DURATION := 6.0
+const VINES_SLOW_MULT := 0.25
+const VINES_RADIUS := 600.0
+const VINES_DAMAGE := 18.0
 const WEAKEN_BOSS_MULT := 0.7
-const VINES_COST := 800
-const WEAKEN_COST := 1200
+const VINES_COST := 1100
+const WEAKEN_COST := 1000
 
 var vines_unlocked: bool = false
 var weaken_unlocked: bool = false
@@ -70,14 +74,16 @@ func try_activate_shield() -> bool:
 	return true
 
 
-# Player-triggered: sends a wave of vines out from the centerpiece, slowing
-# anything caught in it. Returns false if not unlocked or still on cooldown.
+# Ultimate. Player-triggered: a wave of vines sweeps the whole visible
+# field, slowing and damaging everything caught in it. Long cooldown by
+# design — meant to be saved for a real emergency, not spammed. Returns
+# false if not unlocked or still on cooldown.
 func try_activate_vines() -> bool:
 	if not running or not vines_unlocked or not vines_ready:
 		return false
 	vines_ready = false
 	_vines_cooldown_timer = VINES_COOLDOWN
-	emit_signal("vines_triggered", VINES_RADIUS, VINES_SLOW_MULT, VINES_DURATION)
+	emit_signal("vines_triggered", VINES_RADIUS, VINES_SLOW_MULT, VINES_DURATION, VINES_DAMAGE)
 	return true
 
 

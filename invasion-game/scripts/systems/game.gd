@@ -112,12 +112,13 @@ func _handle_tap(screen_pos: Vector2) -> void:
 		_try_place_tower(hex)
 
 
-func _on_vines_triggered(radius: float, slow_mult: float, duration: float) -> void:
+func _on_vines_triggered(radius: float, slow_mult: float, duration: float, damage: float) -> void:
 	var center := center_piece.global_position
 	wave_preview.flash_vine_wave(center, radius)
 	for node in get_tree().get_nodes_in_group("enemies"):
 		if node is EnemyBase and node.global_position.distance_to(center) <= radius:
 			node.apply_slow(slow_mult, duration)
+			node.take_damage(damage)
 
 
 func _try_place_tower(hex: Vector2i) -> void:

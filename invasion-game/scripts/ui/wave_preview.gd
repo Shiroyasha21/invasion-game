@@ -24,10 +24,12 @@ func flash_mini_boss_warning(pos: Vector2) -> void:
 	_add_marker(pos, 1.6, Color(1.0, 0.1, 0.1, 0.95), 34.0, false)
 
 
-# Vines spreading outward from the centerpiece as an expanding ring.
+# Vines spreading outward from the centerpiece as an expanding ring. The
+# ultimate's radius is large, so the wave takes longer to sweep across it.
 func flash_vine_wave(center: Vector2, max_radius: float) -> void:
-	_add_marker(center, 0.8, Color(0.35, 0.9, 0.3, 0.85), max_radius, true)
-	_add_marker(center, 0.8, Color(0.25, 0.7, 0.25, 0.6), max_radius * 0.7, true)
+	_add_marker(center, 1.3, Color(0.35, 0.9, 0.3, 0.9), max_radius, true)
+	_add_marker(center, 1.3, Color(0.25, 0.7, 0.25, 0.65), max_radius * 0.75, true)
+	_add_marker(center, 1.3, Color(0.5, 1.0, 0.4, 0.5), max_radius * 0.5, true)
 
 
 func _add_marker(pos: Vector2, lifetime: float, color: Color, radius: float, expanding: bool) -> void:
