@@ -14,21 +14,21 @@ static func all_cards() -> Array[UpgradeCard]:
 	var cards: Array[UpgradeCard] = []
 
 	# Global stat boosts — apply to every tower on the field.
-	cards.append(UpgradeCard.make_stat("global_damage", "Sharpened Arsenal", "+15% damage, all towers", UpgradeCard.Kind.GLOBAL_STAT, "", "damage", 0.15))
-	cards.append(UpgradeCard.make_stat("global_range", "Eagle Eye", "+15% range, all towers", UpgradeCard.Kind.GLOBAL_STAT, "", "range", 0.15))
-	cards.append(UpgradeCard.make_stat("global_fire_rate", "Quickened Reflexes", "+15% fire rate, all towers", UpgradeCard.Kind.GLOBAL_STAT, "", "fire_rate", 0.15))
+	cards.append(UpgradeCard.make_stat("global_damage", "Sharpened Arsenal", "+10% damage, all towers", UpgradeCard.Kind.GLOBAL_STAT, "", "damage", 0.10))
+	cards.append(UpgradeCard.make_stat("global_range", "Eagle Eye", "+10% range, all towers", UpgradeCard.Kind.GLOBAL_STAT, "", "range", 0.10))
+	cards.append(UpgradeCard.make_stat("global_fire_rate", "Quickened Reflexes", "+10% fire rate, all towers", UpgradeCard.Kind.GLOBAL_STAT, "", "fire_rate", 0.10))
 
 	# Tower-specific attachments — flavor text differs by tower identity.
-	cards.append(UpgradeCard.make_stat("arrow_multishot", "Arrow: Rapid Fire", "+25% fire rate on Arrow Towers", UpgradeCard.Kind.TOWER_ATTACHMENT, "arrow", "fire_rate", 0.25))
-	cards.append(UpgradeCard.make_stat("arrow_barbs", "Arrow: Barbed Tips", "+20% damage on Arrow Towers", UpgradeCard.Kind.TOWER_ATTACHMENT, "arrow", "damage", 0.20))
-	cards.append(UpgradeCard.make_stat("cannon_blast", "Cannon: Bigger Blast", "+40% splash radius on Cannons", UpgradeCard.Kind.TOWER_ATTACHMENT, "cannon", "splash", 0.40))
-	cards.append(UpgradeCard.make_stat("cannon_payload", "Cannon: Heavy Payload", "+25% damage on Cannons", UpgradeCard.Kind.TOWER_ATTACHMENT, "cannon", "damage", 0.25))
-	cards.append(UpgradeCard.make_stat("sniper_scope", "Sniper: Long Scope", "+30% range on Snipers", UpgradeCard.Kind.TOWER_ATTACHMENT, "sniper", "range", 0.30))
-	cards.append(UpgradeCard.make_stat("sniper_rounds", "Sniper: Armor-Piercing Rounds", "+30% damage on Snipers", UpgradeCard.Kind.TOWER_ATTACHMENT, "sniper", "damage", 0.30))
-	cards.append(UpgradeCard.make_stat("owl_talons", "Owl: Sharpened Talons", "+25% damage on Owls", UpgradeCard.Kind.TOWER_ATTACHMENT, "owl", "damage", 0.25))
-	cards.append(UpgradeCard.make_stat("owl_dive", "Owl: Diving Strike", "+25% fire rate on Owls", UpgradeCard.Kind.TOWER_ATTACHMENT, "owl", "fire_rate", 0.25))
-	cards.append(UpgradeCard.make_stat("grenadier_payload", "Grenadier: Bigger Boom", "+35% splash radius on Grenadiers", UpgradeCard.Kind.TOWER_ATTACHMENT, "grenadier", "splash", 0.35))
-	cards.append(UpgradeCard.make_stat("grenadier_shrapnel", "Grenadier: Shrapnel Rounds", "+25% damage on Grenadiers", UpgradeCard.Kind.TOWER_ATTACHMENT, "grenadier", "damage", 0.25))
+	cards.append(UpgradeCard.make_stat("arrow_multishot", "Arrow: Rapid Fire", "+10% fire rate on Arrow Towers", UpgradeCard.Kind.TOWER_ATTACHMENT, "arrow", "fire_rate", 0.10))
+	cards.append(UpgradeCard.make_stat("arrow_barbs", "Arrow: Barbed Tips", "+10% damage on Arrow Towers", UpgradeCard.Kind.TOWER_ATTACHMENT, "arrow", "damage", 0.10))
+	cards.append(UpgradeCard.make_stat("cannon_blast", "Cannon: Bigger Blast", "+10% splash radius on Cannons", UpgradeCard.Kind.TOWER_ATTACHMENT, "cannon", "splash", 0.10))
+	cards.append(UpgradeCard.make_stat("cannon_payload", "Cannon: Heavy Payload", "+10% damage on Cannons", UpgradeCard.Kind.TOWER_ATTACHMENT, "cannon", "damage", 0.10))
+	cards.append(UpgradeCard.make_stat("sniper_scope", "Sniper: Long Scope", "+10% range on Snipers", UpgradeCard.Kind.TOWER_ATTACHMENT, "sniper", "range", 0.10))
+	cards.append(UpgradeCard.make_stat("sniper_rounds", "Sniper: Armor-Piercing Rounds", "+10% damage on Snipers", UpgradeCard.Kind.TOWER_ATTACHMENT, "sniper", "damage", 0.10))
+	cards.append(UpgradeCard.make_stat("owl_talons", "Owl: Sharpened Talons", "+10% damage on Owls", UpgradeCard.Kind.TOWER_ATTACHMENT, "owl", "damage", 0.10))
+	cards.append(UpgradeCard.make_stat("owl_dive", "Owl: Diving Strike", "+10% fire rate on Owls", UpgradeCard.Kind.TOWER_ATTACHMENT, "owl", "fire_rate", 0.10))
+	cards.append(UpgradeCard.make_stat("grenadier_payload", "Grenadier: Bigger Boom", "+10% splash radius on Grenadiers", UpgradeCard.Kind.TOWER_ATTACHMENT, "grenadier", "splash", 0.10))
+	cards.append(UpgradeCard.make_stat("grenadier_shrapnel", "Grenadier: Shrapnel Rounds", "+10% damage on Grenadiers", UpgradeCard.Kind.TOWER_ATTACHMENT, "grenadier", "damage", 0.10))
 
 	# Rare single-tower attachments — applied by tapping a tower after pick.
 	for path in RARE_PATHS:
