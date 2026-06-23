@@ -253,9 +253,10 @@ func _draw_goliath_beetle(radius: float) -> void:
 # Hornet — narrow striped flier, the only boss towers can't physically block.
 func _draw_hornet(radius: float) -> void:
 	var color := Color(0.9, 0.75, 0.1)
+	# Oversized wings — the clearest possible "this is an air unit" signal.
 	for side in [-1.0, 1.0]:
-		draw_set_transform(Vector2(-radius * 0.2, side * radius * 0.95), 0.0, Vector2(1.8, 0.75))
-		draw_circle(Vector2.ZERO, radius * 0.6, Color(1.0, 1.0, 1.0, 0.45))
+		draw_set_transform(Vector2(-radius * 0.2, side * radius * 1.0), 0.0, Vector2(2.8, 1.0))
+		draw_circle(Vector2.ZERO, radius * 0.6, Color(1.0, 1.0, 1.0, 0.5))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	draw_set_transform(Vector2(-radius * 0.2, 0), 0.0, Vector2(1.5, 0.6))

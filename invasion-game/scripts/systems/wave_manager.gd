@@ -29,8 +29,8 @@ const PERIODIC_REST_MIN := 1.5
 const BASE_SPAWN_INTERVAL := 2.2
 const MIN_SPAWN_INTERVAL := 0.45
 
-const DIFFICULTY_GROWTH_PER_MIN := 0.10
-const MINI_BOSS_INTERVAL := 90.0
+const MINI_BOSS_INTERVAL_BASE := 90.0
+const MINI_BOSS_INTERVAL_MIN := 45.0  # bosses get more frequent as the run goes on
 const FIRST_MINI_BOSS_DELAY := 270.0  # 4:30 — give the player more time to build up before the first boss
 const MINI_BOSS_TELEGRAPH_SECONDS := 3.0  # warning shows this long before the boss actually appears
 const WEALTHY_CHANCE := 0.12  # fraction of regular enemies that drop a big bonus
@@ -54,7 +54,7 @@ var kills: int = 0
 var current_wave_index: int = 0
 
 var _spawn_timer: float = 0.0
-var _mini_boss_timer: float = MINI_BOSS_INTERVAL
+var _mini_boss_timer: float = MINI_BOSS_INTERVAL_BASE
 var _resting: bool = false
 var _phase_time_left: float = WAVE_ACTIVE_DURATION
 
@@ -103,7 +103,7 @@ func _process(delta: float) -> void:
 	_mini_boss_timer -= delta
 	if _mini_boss_timer <= 0.0:
 		_spawn_mini_boss()
-		_mini_boss_timer = MINI_BOSS_INTERVAL
+		_mini_boss_timer = _current_mini_boss_interval()
 
 
 func _elapsed_minutes() -> float:
@@ -150,20 +150,32 @@ func _current_spawn_interval() -> float:
 	return lerpf(BASE_SPAWN_INTERVAL, MIN_SPAWN_INTERVAL, _wave_progress())
 
 
+func _current_mini_boss_interval() -> float:
+	return lerpf(MINI_BOSS_INTERVAL_BASE, MINI_BOSS_INTERVAL_MIN, _run_progress())
+
+
+# Gentle early, steep late — early game feels about the same as before;
+# by the end of an 18-minute run this is noticeably harder, so a maxed-out
+# board still faces a real, escalating threat instead of coasting.
 func _difficulty_multiplier() -> float:
-	return 1.0 + _elapsed_minutes() * DIFFICULTY_GROWTH_PER_MIN
+	var m := _elapsed_minutes()
+	return 1.0 + 0.05 * m + 0.008 * m * m
 
 
 func _coin_value_for_time() -> int:
 	return mini(4 + int(_elapsed_minutes() / 0.9), 18)
 
 
+# Capped at 6 — there are only 6 physical spawn directions.
 func _max_directions_for_wave(wave_index: int) -> int:
 	return clampi(1 + wave_index, 1, 6)
 
 
+# Not capped at 6: once every direction is active, further escalation comes
+# from multiple enemies sharing a direction in the same pulse, not from more
+# directions (which physically can't exceed 6).
 func _max_sync_for_wave(wave_index: int) -> int:
-	return clampi(1 + int(wave_index / 2.0), 1, 6)
+	return clampi(1 + int(wave_index / 2.0), 1, 16)
 
 
 func _active_direction_count() -> int:
@@ -172,7 +184,7 @@ func _active_direction_count() -> int:
 
 
 func _sync_size() -> int:
-	var max_sync := mini(_max_sync_for_wave(current_wave_index), _active_direction_count())
+	var max_sync := _max_sync_for_wave(current_wave_index)
 	return clampi(roundi(lerpf(1.0, float(max_sync), _wave_progress())), 1, max_sync)
 
 

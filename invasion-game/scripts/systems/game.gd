@@ -49,6 +49,8 @@ func _ready() -> void:
 	GameState.level_up.connect(_on_player_level_up)
 	level_up_ui.card_chosen.connect(_on_card_chosen)
 	SkillTree.vines_triggered.connect(_on_vines_triggered)
+	SkillTree.vines_unlocked_changed.connect(_on_skill_unlocked)
+	SkillTree.weaken_unlocked_changed.connect(_on_skill_unlocked)
 	wave_manager.wave_cleared.connect(_on_wave_cleared)
 	wave_manager.wave_incoming.connect(_on_wave_incoming)
 
@@ -114,9 +116,15 @@ func _handle_tap(screen_pos: Vector2) -> void:
 
 func _on_vines_triggered(radius: float, slow_mult: float, duration: float) -> void:
 	var center := center_piece.global_position
+	wave_preview.flash_vine_wave(center, radius)
 	for node in get_tree().get_nodes_in_group("enemies"):
 		if node is EnemyBase and node.global_position.distance_to(center) <= radius:
 			node.apply_slow(slow_mult, duration)
+
+
+# Tree growth is tied to skill-tree unlocks and level milestones, not waves.
+func _on_skill_unlocked() -> void:
+	center_piece.grow()
 
 
 func _try_place_tower(hex: Vector2i) -> void:
@@ -183,6 +191,8 @@ func _on_unlocked_radius_changed(new_radius: int) -> void:
 
 func _on_player_level_up(new_level: int) -> void:
 	SFX.play_level_up()
+	if new_level % 4 == 0:
+		center_piece.grow()
 	var cards := UpgradePool.draw(CARDS_PER_LEVEL_UP)
 	level_up_ui.show_cards(new_level, cards)
 

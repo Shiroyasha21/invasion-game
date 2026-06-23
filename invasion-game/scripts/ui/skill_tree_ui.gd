@@ -17,6 +17,7 @@ func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
 	SkillTree.shield_changed.connect(_on_shield_changed)
 	SkillTree.shield_cooldown_changed.connect(_on_shield_cooldown_changed)
+	SkillTree.vines_cooldown_changed.connect(_on_vines_cooldown_changed)
 
 
 func open() -> void:
@@ -31,8 +32,13 @@ func _on_close_pressed() -> void:
 
 
 func _on_vines_pressed() -> void:
-	if SkillTree.unlock_vines():
-		_refresh()
+	if not SkillTree.vines_unlocked:
+		if SkillTree.unlock_vines():
+			_refresh()
+		return
+	if SkillTree.try_activate_vines():
+		SFX.play_vines_activate()
+	_refresh()
 
 
 func _on_weaken_pressed() -> void:
@@ -48,15 +54,13 @@ func _on_shield_cooldown_changed(_remaining: float, _ready: bool) -> void:
 	_update_shield_label(SkillTree.shield_active)
 
 
+func _on_vines_cooldown_changed(remaining: float, _ready: bool) -> void:
+	_update_vines_button(remaining)
+
+
 func _refresh() -> void:
 	_update_shield_label(SkillTree.shield_active)
-
-	if SkillTree.vines_unlocked:
-		vines_label.text = "Vines — Unlocked\nPeriodically slows nearby enemies"
-		vines_button.disabled = true
-	else:
-		vines_label.text = "Unlock Vines (%d coins)\nPeriodically slows nearby enemies" % SkillTree.VINES_COST
-		vines_button.disabled = false
+	_update_vines_button()
 
 	if SkillTree.weaken_unlocked:
 		weaken_label.text = "Weaken Boss — Unlocked\nFuture mini-bosses are weaker"
@@ -64,6 +68,18 @@ func _refresh() -> void:
 	else:
 		weaken_label.text = "Unlock Weaken Boss (%d coins)\nFuture mini-bosses are weaker" % SkillTree.WEAKEN_COST
 		weaken_button.disabled = false
+
+
+func _update_vines_button(cooldown_remaining: float = 0.0) -> void:
+	if not SkillTree.vines_unlocked:
+		vines_label.text = "Unlock Vines (%d coins)\nActive: roots and slows enemies near the tree" % SkillTree.VINES_COST
+		vines_button.disabled = false
+	elif not SkillTree.vines_ready:
+		vines_label.text = "Vines — recharging (%ds)" % ceili(cooldown_remaining)
+		vines_button.disabled = true
+	else:
+		vines_label.text = "Activate Vines"
+		vines_button.disabled = false
 
 
 func _update_shield_label(active: bool) -> void:

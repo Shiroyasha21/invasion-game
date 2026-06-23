@@ -64,8 +64,12 @@ func _draw() -> void:
 		_draw_ant()
 		radius = 20.0
 
+	# Marks a "wealthy" enemy — drops a much bigger coin/essence bonus.
+	# Pulses instead of sitting as a flat ring, to read as treasure-shiny
+	# rather than an arbitrary outline.
 	if is_wealthy:
-		draw_arc(Vector2.ZERO, radius + 10.0, 0, TAU, 24, Color(1.0, 1.0, 0.6, 0.9), 3.0)
+		var pulse := (sin(_age * 5.0) + 1.0) / 2.0
+		draw_arc(Vector2.ZERO, radius + 8.0 + pulse * 4.0, 0, TAU, 24, Color(1.0, 1.0, 0.6, 0.7 + pulse * 0.3), 3.0)
 
 
 func _fill_color(base_color: Color) -> Color:
@@ -196,12 +200,14 @@ func _draw_dragonfly() -> void:
 	_draw_shadow(radius, Vector2(5.0, radius * 0.65), 0.4)
 	var fill := _fill_color(base_color)
 
+	# Big, clearly-visible wings — the main visual cue that this is an air
+	# unit towers can't physically block.
 	for side in [-1.0, 1.0]:
-		draw_set_transform(Vector2(-radius * 0.1, side * radius * 0.3), deg_to_rad(side * -20.0), Vector2(2.0, 0.45))
-		draw_circle(Vector2(radius * 0.6, 0), radius * 0.7, Color(1.0, 1.0, 1.0, 0.35))
+		draw_set_transform(Vector2(-radius * 0.1, side * radius * 0.45), deg_to_rad(side * -20.0), Vector2(3.2, 0.7))
+		draw_circle(Vector2(radius * 0.6, 0), radius * 0.7, Color(1.0, 1.0, 1.0, 0.45))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-		draw_set_transform(Vector2(-radius * 0.6, side * radius * 0.25), deg_to_rad(side * -15.0), Vector2(1.6, 0.4))
-		draw_circle(Vector2(radius * 0.3, 0), radius * 0.55, Color(1.0, 1.0, 1.0, 0.3))
+		draw_set_transform(Vector2(-radius * 0.6, side * radius * 0.35), deg_to_rad(side * -15.0), Vector2(2.6, 0.6))
+		draw_circle(Vector2(radius * 0.3, 0), radius * 0.55, Color(1.0, 1.0, 1.0, 0.4))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	draw_set_transform(Vector2(-radius * 0.3, 0), 0.0, Vector2(1.8, 0.45))
@@ -243,6 +249,8 @@ func _process(delta: float) -> void:
 	_age += delta
 	if is_fast:
 		move_speed = lerpf(_base_move_speed, _base_move_speed * ACCEL_MAX_MULT, clampf(_age / ACCEL_SECONDS, 0.0, 1.0))
+	if is_wealthy:
+		queue_redraw()
 
 	if _slow_timer > 0.0:
 		_slow_timer -= delta

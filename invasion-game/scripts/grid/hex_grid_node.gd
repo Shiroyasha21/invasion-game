@@ -9,6 +9,7 @@ signal unlocked_radius_changed(new_radius: int)
 
 const GRASS_BASE := Color(0.16, 0.36, 0.14)
 const STONE_BASE := Color(0.32, 0.31, 0.33)
+const VOID_COLOR := Color(0.025, 0.04, 0.025, 1.0)
 
 var tiles: Dictionary = {}  # Vector2i -> bool (occupied)
 var unlocked_radius: int
@@ -93,6 +94,11 @@ func _draw() -> void:
 		if hex in highlighted_hexes:
 			draw_circle(center, hex_size * 0.65, Color(0.95, 0.6, 0.15, 0.2 + pulse * 0.25))
 			draw_arc(center, hex_size * 0.65, 0, TAU, 24, Color(1.0, 0.7, 0.2, 0.85), 3.0)
+
+	# Hex tiles naturally form a hexagonal (zigzag) outer silhouette — paint
+	# a thick ring over the boundary to round it off into a clean circle.
+	var outer_radius := float(max_grid_radius) * hex_size
+	draw_arc(Vector2.ZERO, outer_radius + hex_size * 0.5, 0, TAU, 96, VOID_COLOR, hex_size * 1.4)
 
 
 func hex_at_pixel(pos: Vector2) -> Vector2i:

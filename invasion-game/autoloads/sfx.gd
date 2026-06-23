@@ -75,6 +75,10 @@ func play_shield_activate() -> void:
 	_play(_sweep(500.0, 900.0, 0.2, "sine", 0.35))
 
 
+func play_vines_activate() -> void:
+	_play(_sweep(280.0, 480.0, 0.3, "sine", 0.3))
+
+
 # Owl: sharp descending screech.
 func play_owl_screech() -> void:
 	_play(_sweep(2200.0, 900.0, 0.12, "sine", 0.25), _rand_pitch())
