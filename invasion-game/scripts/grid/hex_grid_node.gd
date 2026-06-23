@@ -9,6 +9,7 @@ signal unlocked_radius_changed(new_radius: int)
 
 const GRASS_BASE := Color(0.16, 0.36, 0.14)
 const STONE_BASE := Color(0.32, 0.31, 0.33)
+const VOID_COLOR := Color(0.04, 0.06, 0.04, 1.0)
 
 var tiles: Dictionary = {}  # Vector2i -> bool (occupied)
 var unlocked_radius: int
@@ -93,6 +94,21 @@ func _draw() -> void:
 		if hex in highlighted_hexes:
 			draw_circle(center, hex_size * 0.65, Color(0.95, 0.6, 0.15, 0.2 + pulse * 0.25))
 			draw_arc(center, hex_size * 0.65, 0, TAU, 24, Color(1.0, 0.7, 0.2, 0.85), 3.0)
+
+	_draw_circular_edge()
+
+
+# Rounds off the outermost ring's protruding corners with small void-colored
+# circles, so the board reads as a circle instead of the hex tiles' natural
+# zigzag silhouette. Only touches the handful of corners that actually stick
+# out past the target radius — bounded and small, low-risk if anything's off.
+func _draw_circular_edge() -> void:
+	var target_radius := float(max_grid_radius) * hex_size * 0.97
+	for hex in HexGrid.ring(Vector2i.ZERO, max_grid_radius):
+		var center := HexGrid.hex_to_pixel(hex, hex_size)
+		for corner in HexGrid.corners(center, hex_size):
+			if corner.length() > target_radius:
+				draw_circle(corner, hex_size * 0.42, VOID_COLOR)
 
 
 func hex_at_pixel(pos: Vector2) -> Vector2i:
