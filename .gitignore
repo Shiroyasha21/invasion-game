@@ -8,6 +8,13 @@ export/
 *.apk.idsig
 *.aab
 *.ipa
+invasion-game/invasion_game-*.html
+invasion-game/invasion_game-*.js
+invasion-game/invasion_game-*.wasm
+invasion-game/invasion_game-*.pck
+invasion-game/invasion_game-*.png
+invasion-game/invasion_game-*.worklet.js
+invasion-game/android/
 
 # OS
 .DS_Store
