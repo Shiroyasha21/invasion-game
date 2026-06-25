@@ -48,9 +48,6 @@ func _on_back_pressed() -> void:
 
 
 func _ready() -> void:
-	DebugLog.log_line("Game._ready start")
-	DebugLog.log_line("enemy_scene export=%s" % str(enemy_scene))
-	DebugLog.log_line("mini_boss_scene export=%s" % str(mini_boss_scene))
 	wave_manager.enemy_scene = enemy_scene
 	wave_manager.mini_boss_scene = mini_boss_scene
 	wave_manager.coin_scene = coin_scene
@@ -78,7 +75,6 @@ func _ready() -> void:
 
 
 func _on_objectives_start() -> void:
-	DebugLog.log_line("objectives_start: wave_manager.enemy_scene=%s" % str(wave_manager.enemy_scene))
 	wave_manager.start_run()
 	SkillTree.start()
 

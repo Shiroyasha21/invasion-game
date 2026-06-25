@@ -17,7 +17,6 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-DebugLog="*res://autoloads/debug_log.gd"
 Settings="*res://autoloads/settings.gd"
 GameState="*uid://d15vvuou7daok"
 BuildState="*res://autoloads/build_state.gd"

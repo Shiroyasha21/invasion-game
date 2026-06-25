@@ -188,26 +188,14 @@ func _sync_size() -> int:
 	return clampi(roundi(lerpf(1.0, float(max_sync), _wave_progress())), 1, max_sync)
 
 
-var _logged_first_pulse: bool = false
-
-
 func _spawn_pulse() -> void:
 	if enemy_scene == null:
-		if not _logged_first_pulse:
-			DebugLog.log_line("spawn_pulse: enemy_scene is NULL, aborting")
-			_logged_first_pulse = true
 		return
 	var active := _active_direction_count()
 	var count := _sync_size()
-	if not _logged_first_pulse:
-		DebugLog.log_line("spawn_pulse: active=%d count=%d hex_grid=%s camera=%s" % [active, count, str(hex_grid), str(camera)])
-		_logged_first_pulse = true
 	for _i in count:
 		var dir := randi() % active
 		_spawn_enemy(dir)
-
-
-var _logged_first_spawn: bool = false
 
 
 func _spawn_enemy(dir: int) -> void:
@@ -215,9 +203,6 @@ func _spawn_enemy(dir: int) -> void:
 	var target_pos := center_piece.global_position if center_piece != null else hex_grid.global_position
 
 	var enemy: EnemyBase = enemy_scene.instantiate()
-	if not _logged_first_spawn:
-		DebugLog.log_line("spawn_enemy: pos=%s target=%s parent=%s" % [str(spawn_pos), str(target_pos), str(get_parent())])
-		_logged_first_spawn = true
 	var difficulty := _difficulty_multiplier()
 	enemy.coin_scene = coin_scene
 	enemy.coin_value = _coin_value_for_time()
@@ -336,9 +321,6 @@ func _on_tower_displaced(tower: TowerBase) -> void:
 	tower.global_position = hex_grid.hex_grid_to_pixel(new_hex)
 
 
-var _logged_spawn_radius: bool = false
-
-
 func _spawn_position(dir: int, jitter_deg: float) -> Vector2:
 	var jitter := randf_range(-jitter_deg, jitter_deg) if jitter_deg > 0.0 else 0.0
 	var angle := deg_to_rad(DIRECTION_ANGLES_DEG[dir] + jitter)
@@ -346,9 +328,6 @@ func _spawn_position(dir: int, jitter_deg: float) -> Vector2:
 	var spawn_radius := tile_radius
 	if camera != null:
 		spawn_radius = maxf(tile_radius, camera.max_visible_radius() * 1.15)
-	if not _logged_spawn_radius:
-		DebugLog.log_line("spawn_radius=%.1f tile_radius=%.1f viewport=%s" % [spawn_radius, tile_radius, str(camera.get_viewport_rect().size) if camera != null else "no cam"])
-		_logged_spawn_radius = true
 	return hex_grid.global_position + Vector2(cos(angle), sin(angle)) * spawn_radius
 
 

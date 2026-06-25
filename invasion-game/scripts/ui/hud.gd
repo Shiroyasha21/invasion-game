@@ -19,7 +19,6 @@ const TOWER_DATA_PATHS := [
 @onready var shield_button: Button = $ActionRow/ShieldButton
 @onready var shield_label: Label = $ActionRow/ShieldButton/Row/Label
 @onready var tower_bar: HBoxContainer = $TowerScroll/TowerBar
-@onready var debug_log_label: Label = $DebugLogLabel
 
 var center_piece: CenterPiece
 var _game: Node
@@ -42,9 +41,6 @@ func _ready() -> void:
 	SkillTree.shield_cooldown_changed.connect(_on_shield_cooldown_changed)
 	_update_shield_button()
 	_setup_tower_bar()
-
-	debug_log_label.text = DebugLog.get_text()
-	DebugLog.logged.connect(func(_line): debug_log_label.text = DebugLog.get_text())
 
 
 func init(cp: CenterPiece, game: Node) -> void:

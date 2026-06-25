@@ -125,19 +125,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Shield"
 
-[node name="DebugLogLabel" type="Label" parent="." unique_id=4012345001]
-anchor_right = 1.0
-offset_left = 12.0
-offset_top = 200.0
-offset_right = -12.0
-offset_bottom = 600.0
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(1, 1, 0.4, 0.95)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-autowrap_mode = 2
-
 [node name="TowerScroll" type="ScrollContainer" parent="." unique_id=3940182700]
 anchor_left = 0.5
 anchor_top = 1.0
