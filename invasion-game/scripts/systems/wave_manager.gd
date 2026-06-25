@@ -321,13 +321,19 @@ func _on_tower_displaced(tower: TowerBase) -> void:
 	tower.global_position = hex_grid.hex_grid_to_pixel(new_hex)
 
 
+# Cap relative to the playfield's own size so very wide aspect ratios (e.g.
+# a desktop browser window with the canvas in "expand" stretch mode) can't
+# inflate the screen diagonal enough to spawn enemies absurdly far away.
+const MAX_SPAWN_RADIUS_MULT := 1.8
+
+
 func _spawn_position(dir: int, jitter_deg: float) -> Vector2:
 	var jitter := randf_range(-jitter_deg, jitter_deg) if jitter_deg > 0.0 else 0.0
 	var angle := deg_to_rad(DIRECTION_ANGLES_DEG[dir] + jitter)
 	var tile_radius := (float(hex_grid.max_grid_radius) + SPAWN_MARGIN_TILES) * hex_grid.hex_size
 	var spawn_radius := tile_radius
 	if camera != null:
-		spawn_radius = maxf(tile_radius, camera.max_visible_radius() * 1.15)
+		spawn_radius = clampf(camera.max_visible_radius() * 1.15, tile_radius, tile_radius * MAX_SPAWN_RADIUS_MULT)
 	return hex_grid.global_position + Vector2(cos(angle), sin(angle)) * spawn_radius
 
 
