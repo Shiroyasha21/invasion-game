@@ -79,19 +79,19 @@ theme_override_constants/separation = 16
 [node name="StartButton" type="Button" parent="ButtonPanel/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 76)
-text = "🌱 Start"
+text = "Start"
 theme_override_font_sizes/font_size = 24
 
 [node name="SettingsButton" type="Button" parent="ButtonPanel/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 76)
-text = "⚙ Settings"
+text = "Settings"
 theme_override_font_sizes/font_size = 24
 
 [node name="QuitButton" type="Button" parent="ButtonPanel/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 76)
-text = "✖ Quit"
+text = "Quit"
 theme_override_font_sizes/font_size = 24
 
 [node name="ExitToast" type="Label" parent="."]
