@@ -11,9 +11,9 @@ script = ExtResource("1_k5de2")
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -100.0
-offset_top = 16.0
+offset_top = 70.0
 offset_right = 100.0
-offset_bottom = 50.0
+offset_bottom = 104.0
 grow_horizontal = 2
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 28
@@ -23,9 +23,9 @@ visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 56.0
+offset_top = 110.0
 offset_right = 200.0
-offset_bottom = 80.0
+offset_bottom = 134.0
 grow_horizontal = 2
 horizontal_alignment = 1
 theme_override_colors/font_color = Color(1.0, 0.85, 0.1, 1)
@@ -35,9 +35,9 @@ visible = false
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -200.0
-offset_top = 96.0
+offset_top = 150.0
 offset_right = 200.0
-offset_bottom = 124.0
+offset_bottom = 178.0
 grow_horizontal = 2
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
@@ -46,10 +46,10 @@ theme_override_colors/font_color = Color(0.6, 1.0, 0.7, 1)
 [node name="StatsPanel" type="VBoxContainer" parent="." unique_id=723569033]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -180.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 130.0
+offset_left = -200.0
+offset_top = 70.0
+offset_right = -32.0
+offset_bottom = 184.0
 grow_horizontal = 0
 
 [node name="CoinLabel" type="Label" parent="StatsPanel" unique_id=1089277599]
@@ -72,30 +72,32 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -210.0
-offset_right = 200.0
-offset_bottom = -134.0
+offset_left = -230.0
+offset_top = -250.0
+offset_right = 230.0
+offset_bottom = -160.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 10
+theme_override_constants/separation = 14
 
 [node name="ShovelButton" type="Button" parent="ActionRow" unique_id=2074901135]
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(0, 90)
+theme_override_font_sizes/font_size = 22
 text = "🪣 Sell"
 
 [node name="SkillTreeButton" type="Button" parent="ActionRow" unique_id=2074901136]
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(0, 90)
+theme_override_font_sizes/font_size = 22
 text = "🌳 Skills"
 
 [node name="ShieldButton" type="Button" parent="ActionRow" unique_id=2074901137]
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 76)
+custom_minimum_size = Vector2(0, 90)
 alignment = 1
 
 [node name="Row" type="HBoxContainer" parent="ActionRow/ShieldButton" unique_id=2074901138]
@@ -112,7 +114,7 @@ theme_override_constants/separation = 6
 
 [node name="Icon" type="Control" parent="ActionRow/ShieldButton/Row" unique_id=2074901139]
 mouse_filter = 2
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 script = ExtResource("3_skillicon")
 icon_type = 0
@@ -120,17 +122,31 @@ icon_type = 0
 [node name="Label" type="Label" parent="ActionRow/ShieldButton/Row" unique_id=2074901140]
 mouse_filter = 2
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Shield"
+
+[node name="DebugLogLabel" type="Label" parent="." unique_id=4012345001]
+anchor_right = 1.0
+offset_left = 12.0
+offset_top = 200.0
+offset_right = -12.0
+offset_bottom = 600.0
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 1, 0.4, 0.95)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+autowrap_mode = 2
 
 [node name="TowerScroll" type="ScrollContainer" parent="." unique_id=3940182700]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -480.0
-offset_top = -124.0
-offset_right = 480.0
-offset_bottom = -16.0
+offset_left = -500.0
+offset_top = -148.0
+offset_right = 500.0
+offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 0
 vertical_scroll_mode = 0
@@ -138,11 +154,12 @@ vertical_scroll_mode = 0
 [node name="TowerBar" type="HBoxContainer" parent="TowerScroll" unique_id=3940182771]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+alignment = 1
+theme_override_constants/separation = 14
 
 [node name="ArrowButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182772]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(170, 116)
 
 [node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/ArrowButton" unique_id=3940182780]
 mouse_filter = 2
@@ -156,7 +173,7 @@ alignment = 1
 
 [node name="Icon" type="Control" parent="TowerScroll/TowerBar/ArrowButton/VBox" unique_id=3940182781]
 mouse_filter = 2
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("2_towericon")
@@ -168,18 +185,18 @@ mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "Frog"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/ArrowButton/VBox" unique_id=3940182784]
 mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "100"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="CannonButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182773]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(170, 116)
 
 [node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/CannonButton" unique_id=3940182785]
 mouse_filter = 2
@@ -193,7 +210,7 @@ alignment = 1
 
 [node name="Icon" type="Control" parent="TowerScroll/TowerBar/CannonButton/VBox" unique_id=3940182786]
 mouse_filter = 2
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("2_towericon")
@@ -205,18 +222,18 @@ mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "Bear"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/CannonButton/VBox" unique_id=3940182789]
 mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "160"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="SniperButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182774]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(170, 116)
 
 [node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/SniperButton" unique_id=3940182790]
 mouse_filter = 2
@@ -230,7 +247,7 @@ alignment = 1
 
 [node name="Icon" type="Control" parent="TowerScroll/TowerBar/SniperButton/VBox" unique_id=3940182791]
 mouse_filter = 2
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("2_towericon")
@@ -242,18 +259,18 @@ mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "Monkey"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/SniperButton/VBox" unique_id=3940182794]
 mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "220"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="OwlButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182795]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(170, 116)
 
 [node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/OwlButton" unique_id=3940182796]
 mouse_filter = 2
@@ -267,7 +284,7 @@ alignment = 1
 
 [node name="Icon" type="Control" parent="TowerScroll/TowerBar/OwlButton/VBox" unique_id=3940182797]
 mouse_filter = 2
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("2_towericon")
@@ -279,18 +296,18 @@ mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "Owl"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/OwlButton/VBox" unique_id=3940182799]
 mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "190"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="GrenadierButton" type="Button" parent="TowerScroll/TowerBar" unique_id=3940182800]
 layout_mode = 2
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(170, 116)
 
 [node name="VBox" type="VBoxContainer" parent="TowerScroll/TowerBar/GrenadierButton" unique_id=3940182801]
 mouse_filter = 2
@@ -304,7 +321,7 @@ alignment = 1
 
 [node name="Icon" type="Control" parent="TowerScroll/TowerBar/GrenadierButton/VBox" unique_id=3940182802]
 mouse_filter = 2
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("2_towericon")
@@ -316,11 +333,11 @@ mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "Grenadier"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 
 [node name="CostLabel" type="Label" parent="TowerScroll/TowerBar/GrenadierButton/VBox" unique_id=3940182804]
 mouse_filter = 2
 layout_mode = 2
 horizontal_alignment = 1
 text = "320"
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16

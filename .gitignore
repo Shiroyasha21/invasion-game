@@ -5,6 +5,7 @@
 # Export
 export/
 *.apk
+*.apk.idsig
 *.aab
 *.ipa
 

@@ -29,7 +29,28 @@ var _next_grid_unlock_time: float = GRID_UNLOCK_INTERVAL_SECONDS
 var _run_ended: bool = false
 
 
+const MAIN_MENU_SCENE_PATH := "res://scenes/ui/MainMenu.tscn"
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		_on_back_pressed()
+
+
+func _on_back_pressed() -> void:
+	if skill_tree_ui.visible:
+		skill_tree_ui.close()
+		return
+	get_tree().paused = false
+	wave_manager.stop_run()
+	SkillTree.stop()
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE_PATH)
+
+
 func _ready() -> void:
+	DebugLog.log_line("Game._ready start")
+	DebugLog.log_line("enemy_scene export=%s" % str(enemy_scene))
+	DebugLog.log_line("mini_boss_scene export=%s" % str(mini_boss_scene))
 	wave_manager.enemy_scene = enemy_scene
 	wave_manager.mini_boss_scene = mini_boss_scene
 	wave_manager.coin_scene = coin_scene
@@ -57,6 +78,7 @@ func _ready() -> void:
 
 
 func _on_objectives_start() -> void:
+	DebugLog.log_line("objectives_start: wave_manager.enemy_scene=%s" % str(wave_manager.enemy_scene))
 	wave_manager.start_run()
 	SkillTree.start()
 

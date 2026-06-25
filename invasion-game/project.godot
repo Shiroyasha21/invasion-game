@@ -17,6 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+DebugLog="*res://autoloads/debug_log.gd"
+Settings="*res://autoloads/settings.gd"
 GameState="*uid://d15vvuou7daok"
 BuildState="*res://autoloads/build_state.gd"
 SFX="*res://autoloads/sfx.gd"
@@ -29,6 +31,8 @@ window/size/viewport_height=1920
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation="portrait"
+window/size/width=608
+window/size/height=1080
 
 [gui]
 
@@ -42,3 +46,4 @@ theme/custom="res://resources/theme/game_theme.tres"
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true

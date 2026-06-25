@@ -26,9 +26,13 @@ func open() -> void:
 	get_tree().paused = true
 
 
-func _on_close_pressed() -> void:
+func close() -> void:
 	visible = false
 	get_tree().paused = false
+
+
+func _on_close_pressed() -> void:
+	close()
 
 
 func _on_vines_pressed() -> void:
