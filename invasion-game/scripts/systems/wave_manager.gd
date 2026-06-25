@@ -330,7 +330,7 @@ const MAX_SPAWN_RADIUS_MULT := 1.8
 func _spawn_position(dir: int, jitter_deg: float) -> Vector2:
 	var jitter := randf_range(-jitter_deg, jitter_deg) if jitter_deg > 0.0 else 0.0
 	var angle := deg_to_rad(DIRECTION_ANGLES_DEG[dir] + jitter)
-	var tile_radius := (float(hex_grid.max_grid_radius) + SPAWN_MARGIN_TILES) * hex_grid.hex_size
+	var tile_radius := (float(hex_grid.unlocked_radius) + SPAWN_MARGIN_TILES) * hex_grid.hex_size
 	var spawn_radius := tile_radius
 	if camera != null:
 		spawn_radius = clampf(camera.max_visible_radius() * 1.15, tile_radius, tile_radius * MAX_SPAWN_RADIUS_MULT)
